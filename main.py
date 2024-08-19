@@ -2,42 +2,36 @@ import mysql.connector
 import pandas as pd
 import streamlit as st
 from mysql.connector import Error
+from pymongo import MongoClient 
 
-# MySQL 서버에 연결하는 함수
-def create_connection(host_name, user_name, user_password, db_name):
-    connection = None
-    try:
-        connection = mysql.connector.connect(
-            host=host_name,
-            user=user_name,
-            passwd=user_password,
-            database=db_name
-        )
-        print("MySQL 서버에 성공적으로 연결되었습니다.")
-    except Error as err:
-        print(f"Error: '{err}'")
-    return connection
+uri = "mongodb+srv://red23:dm123@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
-# 데이터 가져오는 함수
-def fetch_data(connection, query):
-    cursor = connection.cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    columns = [desc[0] for desc in cursor.description]
-    cursor.close()
-    return pd.DataFrame(rows, columns=columns)
+# Create a new client and connect to the server
+client = MongoClient(uri,tlsCAFile=ca)
 
-# MySQL 서버에 연결
-connection = create_connection("localhost", "your_username", "your_password", "ex1")
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
 
-# 데이터베이스에서 데이터 가져오기
-query = "SELECT * FROM your_table_name;"
-df = fetch_data(connection, query)
+db = client['test']
+collection = db['students']
 
-# 연결 종료
-connection.close()
+def fetch_data():
+    students = list(collection.find())
+    return students
 
-# Streamlit을 통해 데이터프레임 표시
-st.title("MySQL 테이블 데이터")
-st.write("아래는 'your_table_name' 테이블의 데이터입니다:")
-st.dataframe(df)
+st.title('Student Records from MongoDB')
+    
+# 데이터 불러오기
+data = fetch_data()
+
+# 데이터 표시
+if data:
+    for student in data:
+        st.write(student)
+else:
+    st.write("No data found.")
+    
