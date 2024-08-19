@@ -1,7 +1,5 @@
-import mysql.connector
 import pandas as pd
 import streamlit as st
-from mysql.connector import Error
 from pymongo import MongoClient 
 
 uri = "mongodb+srv://red23:dm123@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
