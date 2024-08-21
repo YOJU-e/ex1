@@ -19,6 +19,33 @@ def number_to_month(month):
             return key
     return "Invalid month name"
 
+def convert_to_date(date_str, i_year):
+    # 예시: 'July1st' 같은 문자열을 '2024-07-01' 같은 형식으로 변환
+    month_map = {
+        'January': 1, 'February': 2, 'March': 3, 'April': 4,
+        'May': 5, 'June': 6, 'July': 7, 'August': 8,
+        'September': 9, 'October': 10, 'November': 11, 'December': 12
+    }
+    if date_str is None:
+        return None
+
+    if date_str == "Total":
+        return None
+    try:
+        # 예를 들어 'July1st'에서 'July'와 '1'을 추출
+        for month in month_map:
+            if date_str.startswith(month):
+                day_str = date_str[len(month):]
+                day = ''.join(filter(str.isdigit, day_str))
+                if day:
+                    month_number = month_map[month]
+                    return datetime(year= i_year, month=month_number, day=int(day))
+                break
+        return None
+    except ValueError as e:
+        print(f"Error converting {date_str}: {e}")
+        return None
+
 def resource_path(relative_path):
     try:
         # PyInstaller에서 실행 중인 경우
@@ -127,7 +154,7 @@ def main():
         
         # Daily report
         daily_df = pd.DataFrame(data)
-        daily_df = daily_df.drop('_id', axis=1)
+        daily_df = df.drop('_id', axis=1)
         daily_df.set_index(daily_df.columns[0], inplace=True)
         def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
             numeric_cols = daily_df.select_dtypes(include=['number']).columns 
@@ -146,7 +173,26 @@ def main():
 
         # Weekly report
         st.write("Weekly Report")
+        def weekly_df (daily_df):
+
+            def convert_to_date_wrapped(date_str):
+                return convert_to_date(date_str, i_year)
         
+            daily_df_melted = daily_df.melt(id_vars=['program'], var_name='Date', value_name='Value')
+            daily_df_melted['Date'] = daily_df_melted['Date'].apply(convert_to_date_wrapped)
+        
+            # 날짜를 포함하는 주 식별 (각 날짜를 해당 주의 월요일로 변환)
+            daily_df_melted['Week'] = daily_df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)
+            # 주별 데이터 집계 (예: 값의 합계)
+            weekly_df = daily_df_melted.groupby(['program', 'Week']).agg({'Value': 'sum'}).reset_index()
+            # 주(week) 기반 데이터프레임으로 Pivot
+            weekly_pivot_df = weekly_df.pivot(index='program', columns='Week', values='Value').fillna(0)
+            weekly_pivot_df.loc['Total'] = weekly_pivot_df.sum()    # 각 열의 값을 합
+            weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
+            return weekly_pivot_df
+        weekly_df = weekly_df (daily_df)
+        st.dataframe(weekly_df)
+            
         '''
         numeric_cols = daily_df2.select_dtypes(include=['number']).columns # 열 선택
         daily_df2['Total'] = daily_df2[numeric_cols].sum(axis=1)
