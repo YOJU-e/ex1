@@ -46,6 +46,47 @@ def convert_to_date(date_str, i_year):
         print(f"Error converting {date_str}: {e}")
         return None
 
+def calculate_total_leads(t_year, t_month):
+    df_total = pd.DataFrame()
+    for y in range(2022,t_year+1):
+        db_name = f'db_leads_{y}'
+        db = client[db_name]
+        if y == t_year:
+            monthly_total = [0] * 12
+            for m in range(1,t_month+1):
+                e_month = number_to_month(m)
+                collection_name = f'{e_month}_{y}'
+                collection = db[collection_name]
+                data = list(collection.find())
+                df_table = pd.DataFrame(data)
+                df_table = df_table.drop('_id', axis=1)
+                df_table = df_table.fillna(0)
+                month_total = df_table.drop('program',axis=1).values.sum()
+                monthly_total[m-1] = month_total
+            df_total[f'{y}'] = monthly_total
+
+        else:
+            monthly_total = [0] * 12
+            for m in range(1,13):
+                e_month = number_to_month(m)
+                collection_name = f'{e_month}_{y}'
+                collection = db[collection_name]
+                data = list(collection.find())
+                df_table = pd.DataFrame(data)
+                df_table = df_table.drop('_id', axis=1)
+                df_table = df_table.fillna(0)
+                month_total = df_table.drop('program',axis=1).values.sum()
+                monthly_total[m-1] = month_total
+            df_total[f'{y}'] = monthly_total
+
+    months = ['January', 'February', 'March', 'April','May','June','July','August','September', 'October', 'November', 'December']
+    df_total.insert(0, 'month', months)
+    sum_row = df_total.iloc[:, 1:].sum()
+    sum_row['month'] = 'Total'
+    df_total = pd.concat([df_total, pd.DataFrame(sum_row).T], ignore_index=True)
+
+    return df_total
+
 def resource_path(relative_path):
     try:
         # PyInstaller에서 실행 중인 경우
@@ -186,7 +227,10 @@ def main():
             
         weekly_df = display_weekly_df(df,i_year)
         st.dataframe(weekly_df)
-            
+        # Yearly report
+        st.write('Yearly Report')  
+        yearly_df = calculate_total_leads(t_year, t_month)
+        st.dataframe(yearly_df)
         
         
         
