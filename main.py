@@ -91,7 +91,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
     st.session_state.w_cpl_df = True
     df = pd.DataFrame({'program':programs})
     df.set_index(df.columns[0], inplace=True)
-    st.write(df.index)
+    st.write('program파일에 저장된 인덱스',df.index)
 
     for y in range(f_year,t_year+1):
         db_name = f'db_leads_{y}'
@@ -106,7 +106,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                 df_table = df_table.drop('_id', axis=1)
                 df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                 df_table.set_index(df_table.columns[0], inplace=True)
-                st.write(df_table.index)
+                st.write('처리된 데이터의 인덱스',df_table.index)
                 new_columns = [convert_to_date(col,y) for col in df_table.columns]
                 df_table.columns = new_columns
                 df = pd.concat([df, df_table], axis=1)
@@ -121,7 +121,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                     df_table = df_table.drop('_id', axis=1)
                     df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                     df_table.set_index(df_table.columns[0], inplace=True)
-                    st.write(df_table.index)
+                    st.write('처리된 데이터의 인덱스', df_table.index)
                     new_columns = [convert_to_date(col,y) for col in df_table.columns]
                     df_table.columns = new_columns
                     df = pd.concat([df, df_table], axis=1)
@@ -135,7 +135,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                     df_table = df_table.drop('_id', axis=1)
                     df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                     df_table.set_index(df_table.columns[0], inplace=True)
-                    st.write(df_table.index)
+                    st.write('처리된 데이터의 인덱스', df_table.index)
                     new_columns = [convert_to_date(col,y) for col in df_table.columns]
                     df_table.columns = new_columns
                     df = pd.concat([df, df_table], axis=1)
