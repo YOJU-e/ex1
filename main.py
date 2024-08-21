@@ -173,14 +173,11 @@ def main():
 
         # Weekly report
         st.write("Weekly Report")
-        def weekly_df (daily_df):
-
+        def weekly_df(daily_df,i_year):
             def convert_to_date_wrapped(date_str):
                 return convert_to_date(date_str, i_year)
-        
             daily_df_melted = daily_df.melt(id_vars=['program'], var_name='Date', value_name='Value')
             daily_df_melted['Date'] = daily_df_melted['Date'].apply(convert_to_date_wrapped)
-        
             # 날짜를 포함하는 주 식별 (각 날짜를 해당 주의 월요일로 변환)
             daily_df_melted['Week'] = daily_df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)
             # 주별 데이터 집계 (예: 값의 합계)
@@ -190,15 +187,11 @@ def main():
             weekly_pivot_df.loc['Total'] = weekly_pivot_df.sum()    # 각 열의 값을 합
             weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
             return weekly_pivot_df
-        weekly_df = weekly_df (daily_df)
+            
+        weekly_df = weekly_df(daily_df)
+        
         st.dataframe(weekly_df)
             
-        '''
-        numeric_cols = daily_df2.select_dtypes(include=['number']).columns # 열 선택
-        daily_df2['Total'] = daily_df2[numeric_cols].sum(axis=1)
-
-        weekly_df = display_weekly_dataframe(daily_df,i_year)
-        '''
         
         
         
