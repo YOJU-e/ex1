@@ -5,10 +5,14 @@ import streamlit as st
 from pymongo import MongoClient
 from datetime import datetime, date
 import time
- 
+import json
 
-'''
-#uri = "mongodb+srv://@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+with open('config.json') as config_file:
+    config = json.load(config_file)
+    mongo_user = config['mongo_user']
+    mongo_password = config['mongo_password']
+
+uri = f"mongodb+srv://{mongo_user}:{mongo_password}@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Create a new client and connect to the server
 client = MongoClient(uri)
@@ -38,7 +42,7 @@ if data:
         st.write(student)
 else:
     st.write("No data found.")
-'''
+
 
 def number_to_month(month):
     months = {
