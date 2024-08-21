@@ -134,6 +134,29 @@ def main():
 
     if st.button('Initialization'):
         st.write('버튼을 누르면 전부다 몽고디비로 보내져')
+        for y in range(2022,t_year+1):
+            db_name= f'db_leads_{y}'   
+            db = client[db_name]
+            if y == t_year:
+                for m in range(1,t_month+1):
+                    e_month = number_to_month(m)
+                    collection_name = f'{e_month}_{y}'
+                    collection = db[collection_name]
+                    csv_path = resource_path(f"leads/{y}/{collection_name}.csv")
+                    df = pd.read_csv(csv_path)
+                    records = df.to_dict(orient='records')
+                    collection.insert_many(records)
+            else:
+                for m in range(1,13):
+                    e_month = number_to_month(m)
+                    collection_name = f'{e_month}_{y}'
+                    collection = db[collection_name]
+                    csv_path = resource_path(f"leads/{y}/{collection_name}.csv")
+                    df = pd.read_csv(csv_path)
+                    records = df.to_dict(orient='records')
+                    collection.insert_many(records)
+        st.write('Completed!')
+       
         
     # 데이터 올리기 - 업데이트 버튼
     years = list(range(2022, t_year + 1))  # From 2022 to now
