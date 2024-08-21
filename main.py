@@ -115,6 +115,7 @@ def main():
         submit_btn = st.button('Submit')
 
     if submit_btn:
+        st.write(f'Daily Report')
         i_year = selected_year
         i_month = selected_month
         e_month = number_to_month(i_month)
