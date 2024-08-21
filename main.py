@@ -276,9 +276,8 @@ def main():
         st.dataframe(weekly_df)
         # Yearly report
         st.write('Yearly Report')  
-        # yearly_df = calculate_total_leads(client, t_year, t_month)
-        # calculate_total_leads(client, t_year, t_month)
-        # # st.dataframe(yearly_df)
+        yearly_df = calculate_total_leads(client, t_year, t_month)
+        st.dataframe(yearly_df)
         
     
     client.close()
