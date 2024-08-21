@@ -768,5 +768,5 @@ def main():
     #     st.write(st.session_state.w_cpl_df)
     #     st.write(st.session_state.t_cpl_df)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
