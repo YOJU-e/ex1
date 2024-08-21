@@ -188,7 +188,7 @@ def main():
             weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
             return weekly_pivot_df
             
-        weekly_df = weekly_df(daily_df)
+        weekly_df = weekly_df(daily_df,i_year)
         
         st.dataframe(weekly_df)
             
