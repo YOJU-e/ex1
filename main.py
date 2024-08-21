@@ -64,20 +64,20 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-def main():
-    st.title('LeadDataAutoReturn')
-    st.markdown('---')
-    Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
-    ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs
-    Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
-    programs_file_path = resource_path("data/program_list.xlsx")
-    df_programs = pd.read_excel(programs_file_path, engine='openpyxl')
-    programs = df_programs.iloc[:, 0].tolist()
+# def main():
+#     st.title('LeadDataAutoReturn')
+#     st.markdown('---')
+#     Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
+#     ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs
+#     Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
+#     programs_file_path = resource_path("data/program_list.xlsx")
+#     df_programs = pd.read_excel(programs_file_path, engine='openpyxl')
+#     programs = df_programs.iloc[:, 0].tolist()
 
-    today_date = datetime.now()
-    e_month = today_date.strftime('%B') #July
-    t_month = today_date.month
-    t_year = today_date.year
+#     today_date = datetime.now()
+#     e_month = today_date.strftime('%B') #July
+#     t_month = today_date.month
+#     t_year = today_date.year
 
     # Session initialization
     # if 'updated' not in st.session_state:
@@ -102,31 +102,31 @@ def main():
     # if download_dir:
     #     st.session_state['download_dir'] = download_dir
 
-    #데일리 리트 체크 화면
-    st.subheader('Leads')
-    # st.markdown('---')
-    years = list(range(2022, t_year + 1))
-    months = list(range(1, 13))
+    # #데일리 리트 체크 화면
+    # st.subheader('Leads')
+    # # st.markdown('---')
+    # years = list(range(2022, t_year + 1))
+    # months = list(range(1, 13))
 
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col1:
-        selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_d_check')
-    with col2:
-        selected_month = st.selectbox('Select Month', months, index=t_month-1, key='month_select_for_d_check')
-    with col3:
-        submit_btn = st.button('Submit')
+    # col1, col2, col3 = st.columns([1, 1, 1])
+    # with col1:
+    #     selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_d_check')
+    # with col2:
+    #     selected_month = st.selectbox('Select Month', months, index=t_month-1, key='month_select_for_d_check')
+    # with col3:
+    #     submit_btn = st.button('Submit')
 
-    if submit_btn:
-        i_year = selected_year
-        i_month = selected_month
-        e_month = number_to_month(i_month)
-        db_name = f'EXDB_{i_year}.db'   # t_year, t_month
-        file_name = f"{e_month}_{i_year}"
-        print(i_month,i_year,e_month)
-        #레포에 저장된 csv파일 가져와서 접근하기 
-        selected_csv_path = resource_path(f"leads/{i_year}/{file_name}.csv")
-        daily_df = pd.read_csv(selected_csv_path)
-        #불러오기까지 성공, 나머지 합계 열 추가하는 것, 불러와지는지 확인하는 것까지 내일하기
+    # if submit_btn:
+    #     i_year = selected_year
+    #     i_month = selected_month
+    #     e_month = number_to_month(i_month)
+    #     db_name = f'EXDB_{i_year}.db'   # t_year, t_month
+    #     file_name = f"{e_month}_{i_year}"
+    #     print(i_month,i_year,e_month)
+    #     #레포에 저장된 csv파일 가져와서 접근하기 
+    #     selected_csv_path = resource_path(f"leads/{i_year}/{file_name}.csv")
+    #     daily_df = pd.read_csv(selected_csv_path)
+    #     #불러오기까지 성공, 나머지 합계 열 추가하는 것, 불러와지는지 확인하는 것까지 내일하기
         
         
         # def display_dataframe(db_name,table_name):   #이거 다시 수정해야함.
@@ -736,5 +736,5 @@ def main():
     #     st.write(st.session_state.w_cpl_df)
     #     st.write(st.session_state.t_cpl_df)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
