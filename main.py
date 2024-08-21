@@ -7,42 +7,6 @@ from datetime import datetime, date
 import time
 import json
 
-with open('config.json') as config_file:
-    config = json.load(config_file)
-    mongo_user = config['mongo_user']
-    mongo_password = config['mongo_password']
-
-uri = f"mongodb+srv://{mongo_user}:{mongo_password}@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
-# Create a new client and connect to the server
-client = MongoClient(uri)
-
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
-
-db = client['test']
-collection = db['students']
-
-def fetch_data():
-    students = list(collection.find())
-    return students
-
-st.title('Student Records from MongoDB')
-    
-# 데이터 불러오기
-data = fetch_data()
-
-# 데이터 표시
-if data:
-    for student in data:
-        st.write(student)
-else:
-    st.write("No data found.")
-
 
 def number_to_month(month):
     months = {
@@ -64,21 +28,89 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-# def main():
-#     st.title('LeadDataAutoReturn')
-#     st.markdown('---')
-#     Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
-#     ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs
-#     Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
-#     programs_file_path = resource_path("data/program_list.xlsx")
-#     df_programs = pd.read_excel(programs_file_path, engine='openpyxl')
-#     programs = df_programs.iloc[:, 0].tolist()
+def main():
+    
+    st.title('LeadDataAutoReturn')
+    st.markdown('---')
+    Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
+    ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs
+    Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
+    programs_file_path = resource_path("data/program_list.xlsx")
+    df_programs = pd.read_excel(programs_file_path, engine='openpyxl')
+    programs = df_programs.iloc[:, 0].tolist()
 
-#     today_date = datetime.now()
-#     e_month = today_date.strftime('%B') #July
-#     t_month = today_date.month
-#     t_year = today_date.year
+    today_date = datetime.now()
+    e_month = today_date.strftime('%B') #July
+    t_month = today_date.month
+    t_year = today_date.year
 
+    # mongoDB를 이용해서 데이터 주고받기
+    def fetch_data():
+        students = list(collection.find())
+        return students
+        
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+        mongo_user = config['mongo_user']
+        mongo_password = config['mongo_password']
+    
+    uri = f"mongodb+srv://{mongo_user}:{mongo_password}@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    
+    # Create a new client and connect to the server
+    client = MongoClient(uri)
+    
+    # Send a ping to confirm a successful connection
+    try:
+        client.admin.command('ping')
+        st.write("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        st.write(e)
+
+    # 데이터 올리기 - 업데이트 버튼
+    years = list(range(2022, t_year + 1))  # From 2022 to now
+    months = list(range(1, 13))  # From January to December
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_update')
+    with col2:
+        selected_month = st.selectbox('Select Month', months, index=t_month-1, key='month_select_for_update')
+    st.markdown("""
+    <style>
+    .stButton button {
+        margin-top: 28px;  
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    with col3:
+        update_btn = st.button('Update')
+
+    if update_btn:
+        i_year = selected_year
+        i_month = selected_month
+        e_month = number_to_month(i_month)
+        db_name= f'db_leads_{i_year}'   # t_year, t_month
+        db = client[db_name]
+        collection_name = f'{e_month}_{i_year}'
+        collection = db[collection_name]
+
+        csv_path = resource_path(f"leads/{i_year}/{collection_name}.csv")
+        df = pd.read_csv('path_to_your_csv_file.csv')
+        records = df.to_dict(orient='records')
+        collection.insert_many(records)    # MongoDB에 데이터 삽입
+        st.write('Updated!')
+        
+        data = fetch_data()    # 데이터 표시
+        if data:
+            for student in data:
+                st.write(student)
+        else:
+            st.write("No data found.")
+
+    st.markdown('---')
+
+    
+  
     # Session initialization
     # if 'updated' not in st.session_state:
     #     st.session_state.updated = False
