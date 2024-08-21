@@ -241,7 +241,6 @@ def main():
         submit_btn = st.button('Submit')
 
     if submit_btn:
-        st.write(f'Daily Report')
         i_year = selected_year
         i_month = selected_month
         e_month = number_to_month(i_month)
@@ -295,7 +294,7 @@ def main():
         st.session_state.yearly_df = yearly_df
 
         
-        st.write(f'Daily Report')
+        st.write('Daily Report')
         st.dataframe(st.session_state.daily_df_with_total)
         st.dataframe(st.session_state.daily_col_sum_df)
         st.write("Weekly Report")
