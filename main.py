@@ -147,6 +147,13 @@ def main():
         # Weekly report
         st.write("Weekly Report")
         
+        '''
+        numeric_cols = daily_df2.select_dtypes(include=['number']).columns # 열 선택
+        daily_df2['Total'] = daily_df2[numeric_cols].sum(axis=1)
+
+        weekly_df = display_weekly_dataframe(daily_df,i_year)
+        '''
+        
         
         
         
