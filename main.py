@@ -108,7 +108,32 @@ def main():
             st.write("No data found.")
 
     st.markdown('---')
+    #데일리 리트 체크 화면
+    st.subheader('Leads')
+    # st.markdown('---')
+    years = list(range(2022, t_year + 1))
+    months = list(range(1, 13))
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_d_check')
+    with col2:
+        selected_month = st.selectbox('Select Month', months, index=t_month-1, key='month_select_for_d_check')
+    with col3:
+        submit_btn = st.button('Submit')
 
+    if submit_btn:
+        i_year = selected_year
+        i_month = selected_month
+        e_month = number_to_month(i_month)
+        db_name= f'db_leads_{i_year}'   # t_year, t_month
+        db = client[db_name]
+        collection_name = f'{e_month}_{i_year}'
+        collection = db[collection_name]
+        data = list(collection.find())
+        daily_df = pd.DataFrame(data)
+        st.dataframe(daily_df)
+        
+        #불러오기까지 성공, 나머지 합계 열 추가하는 것, 불러와지는지 확인하는 것까지 내일하기
     
   
     # Session initialization
