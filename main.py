@@ -95,7 +95,7 @@ def main():
         collection = db[collection_name]
 
         csv_path = resource_path(f"leads/{i_year}/{collection_name}.csv")
-        df = pd.read_csv('path_to_your_csv_file.csv')
+        df = pd.read_csv(csv_path)
         records = df.to_dict(orient='records')
         collection.insert_many(records)    # MongoDB에 데이터 삽입
         st.write('Updated!')
