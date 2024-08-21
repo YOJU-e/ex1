@@ -155,6 +155,7 @@ def main():
         # Daily report
         df = pd.DataFrame(data)
         df = df.drop('_id', axis=1)
+        st.write(df.columns)
         daily_df = df
         def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
             daily_df.set_index(daily_df.columns[0], inplace=True)
