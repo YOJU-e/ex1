@@ -125,9 +125,9 @@ def main():
         data = list(collection.find())
         daily_df = pd.DataFrame(data)
         daily_df = daily_df.drop('_id', axis=1)
-        def daily_df_with_total (daily_df):
-            # 각 행의 합계 계산하여 'Row_Total' 열 추가
-            numeric_cols = daily_df.select_dtypes(include=['number']).columns # 열 선택
+        daily_df.set_index(daily_df.columns[0], inplace=True)
+        def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
+            numeric_cols = daily_df.select_dtypes(include=['number']).columns 
             daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
         
             # 각 열의 합계 계산하여 마지막 행 추가
