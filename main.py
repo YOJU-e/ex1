@@ -59,12 +59,13 @@ def calculate_total_leads(client, t_year, t_month):
                 collection = db[collection_name]
                 data = list(collection.find())
                 df_table = pd.DataFrame(data)
+                st.dataframe(df_table)
                 st.write(df_table.columns)
                 # df_table = df_table.drop('_id', axis=1)
-                df_table = df_table.fillna(0)
-                month_total = df_table.drop('program',axis=1).values.sum()
-                monthly_total[m-1] = month_total
-            df_total[f'{y}'] = monthly_total
+            #     df_table = df_table.fillna(0)
+            #     month_total = df_table.drop('program',axis=1).values.sum()
+            #     monthly_total[m-1] = month_total
+            # df_total[f'{y}'] = monthly_total
 
         else:
             monthly_total = [0] * 12
@@ -74,17 +75,19 @@ def calculate_total_leads(client, t_year, t_month):
                 collection = db[collection_name]
                 data = list(collection.find())
                 df_table = pd.DataFrame(data)
+                st.dataframe(df_table)
+                st.write(df_table.columns)
                 # df_table = df_table.drop('_id', axis=1)
-                df_table = df_table.fillna(0)
-                month_total = df_table.drop('program',axis=1).values.sum()
-                monthly_total[m-1] = month_total
-            df_total[f'{y}'] = monthly_total
+            #     df_table = df_table.fillna(0)
+            #     month_total = df_table.drop('program',axis=1).values.sum()
+            #     monthly_total[m-1] = month_total
+            # df_total[f'{y}'] = monthly_total
 
-    months = ['January', 'February', 'March', 'April','May','June','July','August','September', 'October', 'November', 'December']
-    df_total.insert(0, 'month', months)
-    sum_row = df_total.iloc[:, 1:].sum()
-    sum_row['month'] = 'Total'
-    df_total = pd.concat([df_total, pd.DataFrame(sum_row).T], ignore_index=True)
+    # months = ['January', 'February', 'March', 'April','May','June','July','August','September', 'October', 'November', 'December']
+    # df_total.insert(0, 'month', months)
+    # sum_row = df_total.iloc[:, 1:].sum()
+    # sum_row['month'] = 'Total'
+    # df_total = pd.concat([df_total, pd.DataFrame(sum_row).T], ignore_index=True)
 
     return df_total
 
@@ -230,8 +233,9 @@ def main():
         st.dataframe(weekly_df)
         # Yearly report
         st.write('Yearly Report')  
-        yearly_df = calculate_total_leads(client, t_year, t_month)
-        st.dataframe(yearly_df)
+        # yearly_df = calculate_total_leads(client, t_year, t_month)
+        calculate_total_leads(client, t_year, t_month)
+        # st.dataframe(yearly_df)
         
         
         
