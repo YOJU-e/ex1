@@ -106,7 +106,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                 df_table = df_table.drop('_id', axis=1)
                 df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                 df_table.set_index(df_table.columns[0], inplace=True)
-                st.write('처리된 데이터의 인덱스',df_table.index)
+                st.write('처리된 데이터의 인덱스',df_table.index)    # Master&phd인덱스 없음
                 new_columns = [convert_to_date(col,y) for col in df_table.columns]
                 df_table.columns = new_columns
                 df = pd.concat([df, df_table], axis=1)
@@ -121,7 +121,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                     df_table = df_table.drop('_id', axis=1)
                     df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                     df_table.set_index(df_table.columns[0], inplace=True)
-                    st.write('처리된 데이터의 인덱스', df_table.index)
+                    st.write('처리된 데이터의 인덱스', df_table.index)    # Master&phd인덱스 없음
                     new_columns = [convert_to_date(col,y) for col in df_table.columns]
                     df_table.columns = new_columns
                     df = pd.concat([df, df_table], axis=1)
@@ -135,7 +135,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                     df_table = df_table.drop('_id', axis=1)
                     df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                     df_table.set_index(df_table.columns[0], inplace=True)
-                    st.write('처리된 데이터의 인덱스', df_table.index)
+                    st.write('처리된 데이터의 인덱스', df_table.index)    # Master&phd인덱스 없음
                     new_columns = [convert_to_date(col,y) for col in df_table.columns]
                     df_table.columns = new_columns
                     df = pd.concat([df, df_table], axis=1)
@@ -288,8 +288,20 @@ def main():
 
         csv_path = resource_path(f"leads/{i_year}/{collection_name}.csv")
         df = pd.read_csv(csv_path)
+        
+        # 해당 컬렉션에 데이터가 있는지 확인
+        if db[collection_name].count_documents({}) > 0:
+            db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
+            db.create_collection(collection_name)    # 컬렉션 재생성
+            print(f"Collection '{collection_name}' was dropped and recreated.")
+        else:
+            # 컬렉션이 비어있다면 새로 생성 (필요한 경우)
+            if collection_name not in db.list_collection_names():
+                db.create_collection(collection_name)
+                print(f"Collection '{collection_name}' was created.")
         records = df.to_dict(orient='records')
-        collection.insert_many(records)    # MongoDB에 데이터 삽입
+        collection.insert_many(records)
+        
         st.write('Updated!')
 
     st.markdown('---')
