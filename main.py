@@ -286,7 +286,7 @@ def main():
         weekly_df = display_weekly_df(df,i_year)
         # Yearly report 
         yearly_df = calculate_total_leads(client, t_year, t_month)
-        client.close()
+        
 
         st.session_state.daily_df_with_total = daily_df_with_total
         st.session_state.daily_col_sum_df = daily_col_sum_df
@@ -302,8 +302,6 @@ def main():
             st.write('Yearly Report')
             st.dataframe(st.session_state.yearly_df)
  
-
-
     # # 옵션 파일 경로, 나머지 2개 파일 경로, 다운 디렉토리
     # # 주소 입력 창
     # if 'download_dir' not in st.session_state:
@@ -314,169 +312,166 @@ def main():
     #     st.session_state['download_dir'] = download_dir
 
 
-
-    
-
     # #CPL 체크 화면
+    st.markdown('---')
+    st.subheader('CPLs')    #Have 37 categories, default = 1
     # st.markdown('---')
-    # st.subheader('CPLs')    #Have 37 categories, default = 1
-    # # st.markdown('---')
-    # years = list(range(2022, t_year + 1))
-    # months = list(range(1, 13))
+    years = list(range(2022, t_year + 1))
+    months = list(range(1, 13))
 
-    # col1, col2, col3, col4 = st.columns([1,2,2,1])
-    # with col1:
-    #     st.write('From')
-    # with col2:
-    #     selected_f_year = st.selectbox('Select Year', years, index=years.index(t_year), key='f_year_select_for_CPL')
-    # with col3:
-    #     selected_f_month = st.selectbox('Select Month', months, index=t_month-1, key='f_month_select_for_CPL')
-    # with col4:
-    #     cal_btn = st.button('Calculate')
+    col1, col2, col3, col4 = st.columns([1,2,2,1])
+    with col1:
+        st.write('From')
+    with col2:
+        selected_f_year = st.selectbox('Select Year', years, index=years.index(t_year), key='f_year_select_for_CPL')
+    with col3:
+        selected_f_month = st.selectbox('Select Month', months, index=t_month-1, key='f_month_select_for_CPL')
+    with col4:
+        cal_btn = st.button('Calculate')
 
-    # col1, col2, col3, col4 = st.columns([1,2,2,1])
-    # with col1:
-    #     st.write('To')
-    # with col2:
-    #     selected_t_year = st.selectbox('Select Year', years, index=years.index(t_year), key='t_year_select_for_CPL')
-    # with col3:
-    #     selected_t_month = st.selectbox('Select Month', months, index=t_month-1, key='t_month_select_for_CPL')
-    # with col4:
-    #     st.write(' ')
+    col1, col2, col3, col4 = st.columns([1,2,2,1])
+    with col1:
+        st.write('To')
+    with col2:
+        selected_t_year = st.selectbox('Select Year', years, index=years.index(t_year), key='t_year_select_for_CPL')
+    with col3:
+        selected_t_month = st.selectbox('Select Month', months, index=t_month-1, key='t_month_select_for_CPL')
+    with col4:
+        st.write(' ')
 
-    # program_list_df = pd.DataFrame([programs[i:i+6] for i in range(0, len(programs), 6)])
-    # if 'costs' not in st.session_state:
-    #     st.session_state.costs = [''] * 37
-    # col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
-    # with col1:
-    #     cost_AcS_PG = st.text_input(f'{program_list_df.iloc[0,0]}', value='1', key=f'cost_{program_list_df.iloc[0,0]}')
-    #     st.session_state.costs[0] = cost_AcS_PG
-    # with col2:
-    #     cost_AcS_UG = st.text_input(f'{program_list_df.iloc[0,1]}', value='1', key=f'cost_{program_list_df.iloc[0,1]}')
-    #     st.session_state.costs[1] = cost_AcS_UG
-    # with col3:
-    #     cost_ApS_PG = st.text_input(f'{program_list_df.iloc[0,2]}', value='1', key=f'cost_{program_list_df.iloc[0,2]}')
-    #     st.session_state.costs[2] = cost_ApS_PG
-    # with col4:
-    #     cost_ApS_UG = st.text_input(f'{program_list_df.iloc[0,3]}', value='1', key=f'cost_{program_list_df.iloc[0,3]}')
-    #     st.session_state.costs[3] = cost_ApS_UG
-    # with col5:
-    #     cost_A_PG = st.text_input(f'{program_list_df.iloc[0,4]}', value='1', key=f'cost_{program_list_df.iloc[0,4]}')
-    #     st.session_state.costs[4] = cost_A_PG
-    # with col6:
-    #     cost_A_UG = st.text_input(f'{program_list_df.iloc[0,5]}', value='1', key=f'cost_{program_list_df.iloc[0,5]}')
-    #     st.session_state.costs[5] = cost_A_UG
+    program_list_df = pd.DataFrame([programs[i:i+6] for i in range(0, len(programs), 6)])
+    if 'costs' not in st.session_state:
+        st.session_state.costs = [''] * 37
+    col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
+    with col1:
+        cost_AcS_PG = st.text_input(f'{program_list_df.iloc[0,0]}', value='1', key=f'cost_{program_list_df.iloc[0,0]}')
+        st.session_state.costs[0] = cost_AcS_PG
+    with col2:
+        cost_AcS_UG = st.text_input(f'{program_list_df.iloc[0,1]}', value='1', key=f'cost_{program_list_df.iloc[0,1]}')
+        st.session_state.costs[1] = cost_AcS_UG
+    with col3:
+        cost_ApS_PG = st.text_input(f'{program_list_df.iloc[0,2]}', value='1', key=f'cost_{program_list_df.iloc[0,2]}')
+        st.session_state.costs[2] = cost_ApS_PG
+    with col4:
+        cost_ApS_UG = st.text_input(f'{program_list_df.iloc[0,3]}', value='1', key=f'cost_{program_list_df.iloc[0,3]}')
+        st.session_state.costs[3] = cost_ApS_UG
+    with col5:
+        cost_A_PG = st.text_input(f'{program_list_df.iloc[0,4]}', value='1', key=f'cost_{program_list_df.iloc[0,4]}')
+        st.session_state.costs[4] = cost_A_PG
+    with col6:
+        cost_A_UG = st.text_input(f'{program_list_df.iloc[0,5]}', value='1', key=f'cost_{program_list_df.iloc[0,5]}')
+        st.session_state.costs[5] = cost_A_UG
 
-    # col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
-    # with col1:
-    #     cost_B_PG = st.text_input(f'{program_list_df.iloc[1,0]}', value='1', key=f'cost_{program_list_df.iloc[1,0]}')
-    #     st.session_state.costs[6] = cost_B_PG
-    # with col2:
-    #     cost_B_UG = st.text_input(f'{program_list_df.iloc[1,1]}', value='1', key=f'cost_{program_list_df.iloc[1,1]}')
-    #     st.session_state.costs[7] = cost_B_UG
-    # with col3:
-    #     cost_E_PG = st.text_input(f'{program_list_df.iloc[1,2]}', value='1', key=f'cost_{program_list_df.iloc[1,2]}')
-    #     st.session_state.costs[8] = cost_E_PG
-    # with col4:
-    #     cost_E_UG = st.text_input(f'{program_list_df.iloc[1,3]}', value='1', key=f'cost_{program_list_df.iloc[1,3]}')
-    #     st.session_state.costs[9] = cost_E_UG
-    # with col5:
-    #     cost_FMHS_PG = st.text_input(f'{program_list_df.iloc[1,4]}', value='1', key=f'cost_{program_list_df.iloc[1,4]}')
-    #     st.session_state.costs[10] = cost_FMHS_PG
-    # with col6:
-    #     cost_FMHS_UG = st.text_input(f'{program_list_df.iloc[1,5]}', value='1', key=f'cost_{program_list_df.iloc[1,5]}')
-    #     st.session_state.costs[11] = cost_FMHS_UG
+    col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
+    with col1:
+        cost_B_PG = st.text_input(f'{program_list_df.iloc[1,0]}', value='1', key=f'cost_{program_list_df.iloc[1,0]}')
+        st.session_state.costs[6] = cost_B_PG
+    with col2:
+        cost_B_UG = st.text_input(f'{program_list_df.iloc[1,1]}', value='1', key=f'cost_{program_list_df.iloc[1,1]}')
+        st.session_state.costs[7] = cost_B_UG
+    with col3:
+        cost_E_PG = st.text_input(f'{program_list_df.iloc[1,2]}', value='1', key=f'cost_{program_list_df.iloc[1,2]}')
+        st.session_state.costs[8] = cost_E_PG
+    with col4:
+        cost_E_UG = st.text_input(f'{program_list_df.iloc[1,3]}', value='1', key=f'cost_{program_list_df.iloc[1,3]}')
+        st.session_state.costs[9] = cost_E_UG
+    with col5:
+        cost_FMHS_PG = st.text_input(f'{program_list_df.iloc[1,4]}', value='1', key=f'cost_{program_list_df.iloc[1,4]}')
+        st.session_state.costs[10] = cost_FMHS_PG
+    with col6:
+        cost_FMHS_UG = st.text_input(f'{program_list_df.iloc[1,5]}', value='1', key=f'cost_{program_list_df.iloc[1,5]}')
+        st.session_state.costs[11] = cost_FMHS_UG
 
-    # col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
-    # with col1:
-    #     cost_FMHS_UG_N = st.text_input(f'{program_list_df.iloc[2,0]}', value='1', key=f'cost_{program_list_df.iloc[2,0]}')
-    #     st.session_state.costs[12] = cost_FMHS_UG_N
-    # with col2:
-    #     cost_FOSSLA_PG = st.text_input(f'{program_list_df.iloc[2,1]}', value='1', key=f'cost_{program_list_df.iloc[2,1]}')
-    #     st.session_state.costs[13] = cost_FOSSLA_PG
-    # with col3:
-    #     cost_FOSSLA_UG = st.text_input(f'{program_list_df.iloc[2,2]}', value='1', key=f'cost_{program_list_df.iloc[2,2]}')
-    #     st.session_state.costs[14] = cost_FOSSLA_UG
-    # with col4:
-    #     cost_F_art = st.text_input(f'{program_list_df.iloc[2,3]}', value='1', key=f'cost_{program_list_df.iloc[2,3]}')
-    #     st.session_state.costs[15] = cost_F_art
-    # with col5:
-    #     cost_F_sci = st.text_input(f'{program_list_df.iloc[2,4]}', value='1', key=f'cost_{program_list_df.iloc[2,4]}')
-    #     st.session_state.costs[16] = cost_F_sci
-    # with col6:
-    #     cost_FPS_PG = st.text_input(f'{program_list_df.iloc[2,5]}', value='1', key=f'cost_{program_list_df.iloc[2,5]}')
-    #     st.session_state.costs[17] = cost_FPS_PG
+    col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
+    with col1:
+        cost_FMHS_UG_N = st.text_input(f'{program_list_df.iloc[2,0]}', value='1', key=f'cost_{program_list_df.iloc[2,0]}')
+        st.session_state.costs[12] = cost_FMHS_UG_N
+    with col2:
+        cost_FOSSLA_PG = st.text_input(f'{program_list_df.iloc[2,1]}', value='1', key=f'cost_{program_list_df.iloc[2,1]}')
+        st.session_state.costs[13] = cost_FOSSLA_PG
+    with col3:
+        cost_FOSSLA_UG = st.text_input(f'{program_list_df.iloc[2,2]}', value='1', key=f'cost_{program_list_df.iloc[2,2]}')
+        st.session_state.costs[14] = cost_FOSSLA_UG
+    with col4:
+        cost_F_art = st.text_input(f'{program_list_df.iloc[2,3]}', value='1', key=f'cost_{program_list_df.iloc[2,3]}')
+        st.session_state.costs[15] = cost_F_art
+    with col5:
+        cost_F_sci = st.text_input(f'{program_list_df.iloc[2,4]}', value='1', key=f'cost_{program_list_df.iloc[2,4]}')
+        st.session_state.costs[16] = cost_F_sci
+    with col6:
+        cost_FPS_PG = st.text_input(f'{program_list_df.iloc[2,5]}', value='1', key=f'cost_{program_list_df.iloc[2,5]}')
+        st.session_state.costs[17] = cost_FPS_PG
 
-    # col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
-    # with col1:
-    #     cost_FPS_UG = st.text_input(f'{program_list_df.iloc[3,0]}', value='1', key=f'cost_{program_list_df.iloc[3,0]}')
-    #     st.session_state.costs[18] = cost_FPS_UG
-    # with col2:
-    #     cost_GBS_PG = st.text_input(f'{program_list_df.iloc[3,1]}', value='1', key=f'cost_{program_list_df.iloc[3,1]}')
-    #     st.session_state.costs[19] = cost_GBS_PG
-    # with col3:
-    #     cost_H_PG = st.text_input(f'{program_list_df.iloc[3,2]}', value='1', key=f'cost_{program_list_df.iloc[3,2]}')
-    #     st.session_state.costs[20] = cost_H_PG
-    # with col4:
-    #     cost_H_UG = st.text_input(f'{program_list_df.iloc[3,3]}', value='1', key=f'cost_{program_list_df.iloc[3,3]}')
-    #     st.session_state.costs[21] = cost_H_UG
-    # with col5:
-    #     cost_IASDA_PG = st.text_input(f'{program_list_df.iloc[3,4]}', value='1', key=f'cost_{program_list_df.iloc[3,4]}')
-    #     st.session_state.costs[22] = cost_IASDA_PG
-    # with col6:
-    #     cost_IASDA_UG = st.text_input(f'{program_list_df.iloc[3,5]}', value='1', key=f'cost_{program_list_df.iloc[3,5]}')
-    #     st.session_state.costs[23] = cost_IASDA_UG
+    col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
+    with col1:
+        cost_FPS_UG = st.text_input(f'{program_list_df.iloc[3,0]}', value='1', key=f'cost_{program_list_df.iloc[3,0]}')
+        st.session_state.costs[18] = cost_FPS_UG
+    with col2:
+        cost_GBS_PG = st.text_input(f'{program_list_df.iloc[3,1]}', value='1', key=f'cost_{program_list_df.iloc[3,1]}')
+        st.session_state.costs[19] = cost_GBS_PG
+    with col3:
+        cost_H_PG = st.text_input(f'{program_list_df.iloc[3,2]}', value='1', key=f'cost_{program_list_df.iloc[3,2]}')
+        st.session_state.costs[20] = cost_H_PG
+    with col4:
+        cost_H_UG = st.text_input(f'{program_list_df.iloc[3,3]}', value='1', key=f'cost_{program_list_df.iloc[3,3]}')
+        st.session_state.costs[21] = cost_H_UG
+    with col5:
+        cost_IASDA_PG = st.text_input(f'{program_list_df.iloc[3,4]}', value='1', key=f'cost_{program_list_df.iloc[3,4]}')
+        st.session_state.costs[22] = cost_IASDA_PG
+    with col6:
+        cost_IASDA_UG = st.text_input(f'{program_list_df.iloc[3,5]}', value='1', key=f'cost_{program_list_df.iloc[3,5]}')
+        st.session_state.costs[23] = cost_IASDA_UG
 
-    # col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
-    # with col1:
-    #     cost_ICAD_PG = st.text_input(f'{program_list_df.iloc[4,0]}', value='1', key=f'cost_{program_list_df.iloc[4,0]}')
-    #     st.session_state.costs[24] = cost_ICAD_PG
-    # with col2:
-    #     cost_ICAD_UG = st.text_input(f'{program_list_df.iloc[4,1]}', value='1', key=f'cost_{program_list_df.iloc[4,1]}')
-    #     st.session_state.costs[25] = cost_ICAD_UG
-    # with col3:
-    #     cost_IMUS_PG = st.text_input(f'{program_list_df.iloc[4,2]}', value='1', key=f'cost_{program_list_df.iloc[4,2]}')
-    #     st.session_state.costs[26] = cost_IMUS_PG
-    # with col4:
-    #     cost_IMUS_UG = st.text_input(f'{program_list_df.iloc[4,3]}', value='1', key=f'cost_{program_list_df.iloc[4,3]}')
-    #     st.session_state.costs[27] = cost_IMUS_UG
-    # with col5:
-    #     cost_IT_PG = st.text_input(f'{program_list_df.iloc[4,4]}', value='1', key=f'cost_{program_list_df.iloc[4,4]}')
-    #     st.session_state.costs[28] = cost_IT_PG
-    # with col6:
-    #     cost_IT_UG = st.text_input(f'{program_list_df.iloc[4,5]}', value='1', key=f'cost_{program_list_df.iloc[4,5]}')
-    #     st.session_state.costs[29] = cost_IT_UG
+    col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
+    with col1:
+        cost_ICAD_PG = st.text_input(f'{program_list_df.iloc[4,0]}', value='1', key=f'cost_{program_list_df.iloc[4,0]}')
+        st.session_state.costs[24] = cost_ICAD_PG
+    with col2:
+        cost_ICAD_UG = st.text_input(f'{program_list_df.iloc[4,1]}', value='1', key=f'cost_{program_list_df.iloc[4,1]}')
+        st.session_state.costs[25] = cost_ICAD_UG
+    with col3:
+        cost_IMUS_PG = st.text_input(f'{program_list_df.iloc[4,2]}', value='1', key=f'cost_{program_list_df.iloc[4,2]}')
+        st.session_state.costs[26] = cost_IMUS_PG
+    with col4:
+        cost_IMUS_UG = st.text_input(f'{program_list_df.iloc[4,3]}', value='1', key=f'cost_{program_list_df.iloc[4,3]}')
+        st.session_state.costs[27] = cost_IMUS_UG
+    with col5:
+        cost_IT_PG = st.text_input(f'{program_list_df.iloc[4,4]}', value='1', key=f'cost_{program_list_df.iloc[4,4]}')
+        st.session_state.costs[28] = cost_IT_PG
+    with col6:
+        cost_IT_UG = st.text_input(f'{program_list_df.iloc[4,5]}', value='1', key=f'cost_{program_list_df.iloc[4,5]}')
+        st.session_state.costs[29] = cost_IT_UG
 
-    # col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
-    # with col1:
-    #     cost_MPhD = st.text_input(f'{program_list_df.iloc[5,0]}', value='1', key=f'cost_{program_list_df.iloc[5,0]}')
-    #     st.session_state.costs[30] = cost_MPhD
-    # with col2:
-    #     cost_SEC_GS = st.text_input(f'{program_list_df.iloc[5,1]}', value='1', key=f'cost_{program_list_df.iloc[5,1]}')
-    #     st.session_state.costs[31] = cost_SEC_GS
-    # with col3:
-    #     cost_SEC_F = st.text_input(f'{program_list_df.iloc[5,2]}', value='1', key=f'cost_{program_list_df.iloc[5,2]}')
-    #     st.session_state.costs[32] = cost_SEC_F
-    # with col4:
-    #     cost_SEC_DF = st.text_input(f'{program_list_df.iloc[5,3]}', value='1', key=f'cost_{program_list_df.iloc[5,3]}')
-    #     st.session_state.costs[33] = cost_SEC_DF
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+    with col1:
+        cost_MPhD = st.text_input(f'{program_list_df.iloc[5,0]}', value='1', key=f'cost_{program_list_df.iloc[5,0]}')
+        st.session_state.costs[30] = cost_MPhD
+    with col2:
+        cost_SEC_GS = st.text_input(f'{program_list_df.iloc[5,1]}', value='1', key=f'cost_{program_list_df.iloc[5,1]}')
+        st.session_state.costs[31] = cost_SEC_GS
+    with col3:
+        cost_SEC_F = st.text_input(f'{program_list_df.iloc[5,2]}', value='1', key=f'cost_{program_list_df.iloc[5,2]}')
+        st.session_state.costs[32] = cost_SEC_F
+    with col4:
+        cost_SEC_DF = st.text_input(f'{program_list_df.iloc[5,3]}', value='1', key=f'cost_{program_list_df.iloc[5,3]}')
+        st.session_state.costs[33] = cost_SEC_DF
 
-    # col1, col2, col3 = st.columns([1, 2, 1])
-    # with col1:
-    #     cost_SEC_MS = st.text_input(f'{program_list_df.iloc[5,4]}', value='1', key=f'cost_{program_list_df.iloc[5,4]}')
-    #     st.session_state.costs[34] = cost_SEC_MS
-    # with col2:
-    #     cost_SEC_OEI = st.text_input(f'{program_list_df.iloc[5,5]}', value='1', key=f'cost_{program_list_df.iloc[5,5]}')
-    #     st.session_state.costs[35] = cost_SEC_OEI
-    # with col3:
-    #     cost_SEC_UEC = st.text_input(f'{program_list_df.iloc[6,0]}', value='1', key=f'cost_{program_list_df.iloc[6,0]}')
-    #     st.session_state.costs[36] = cost_SEC_UEC
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col1:
+        cost_SEC_MS = st.text_input(f'{program_list_df.iloc[5,4]}', value='1', key=f'cost_{program_list_df.iloc[5,4]}')
+        st.session_state.costs[34] = cost_SEC_MS
+    with col2:
+        cost_SEC_OEI = st.text_input(f'{program_list_df.iloc[5,5]}', value='1', key=f'cost_{program_list_df.iloc[5,5]}')
+        st.session_state.costs[35] = cost_SEC_OEI
+    with col3:
+        cost_SEC_UEC = st.text_input(f'{program_list_df.iloc[6,0]}', value='1', key=f'cost_{program_list_df.iloc[6,0]}')
+        st.session_state.costs[36] = cost_SEC_UEC
 
-    # if cal_btn:
-    #     f_year = selected_f_year
-    #     f_month = selected_f_month
-    #     t_year = selected_t_year
-    #     t_month = selected_t_month
+    if cal_btn:
+        f_year = selected_f_year
+        f_month = selected_f_month
+        t_year = selected_t_year
+        t_month = selected_t_month
 
     #     # weekly cpl 계산
     #     w_df = concat_d_df(programs, f_year, f_month, t_year, t_month)
@@ -880,6 +875,8 @@ def main():
     # if st.session_state.w_cpl_df is not False:
     #     st.write(st.session_state.w_cpl_df)
     #     st.write(st.session_state.t_cpl_df)
+    
+    client.close()
 
 if __name__ == "__main__":
     main()
