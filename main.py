@@ -131,11 +131,34 @@ def main():
         collection = db[collection_name]
         data = list(collection.find())
         daily_df = pd.DataFrame(data)
-        st.dataframe(daily_df)
+        def daily_df_with_total (daily_df):
+            # 각 행의 합계 계산하여 'Row_Total' 열 추가
+            numeric_cols = daily_df.select_dtypes(include=['number']).columns # 열 선택
+            daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
+        
+            # 각 열의 합계 계산하여 마지막 행 추가
+            # total_row = daily_df[numeric_cols].sum()
+            # total_row['Total'] = total_row.sum()  # 'Total' 열의 총 합
+            # total_row['program'] = 'Total_Leads'
+            # total_row_df = pd.DataFrame(total_row).transpose()
+            # daily_df = pd.concat([daily_df, total_row_df], ignore_index=True)
+            return daily_df
+        daily_df_with_total = daily_df_with_total (daily_df)
+        st.dataframe(daily_df_with_total)
+
+        def daily_col_sum_dataframe(daily_df):
+            daily_df.set_index('program', inplace=True)
+            column_sums = daily_df.sum(axis=0)
+            column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
+            return column_sums_df
+        daily_col_sum_df = daily_col_sum_dataframe(daily_df)
+        st.dataframe(daily_col_sum_df)
+        
         
         #불러오기까지 성공, 나머지 합계 열 추가하는 것, 불러와지는지 확인하는 것까지 내일하기
     
-  
+    client.close()
+
     # Session initialization
     # if 'updated' not in st.session_state:
     #     st.session_state.updated = False
