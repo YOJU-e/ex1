@@ -133,7 +133,6 @@ def main():
         st.write(e)
 
     if st.button('Initialization'):
-        st.write('버튼을 누르면 전부다 몽고디비로 보내져')
         for y in range(2022,t_year+1):
             db_name= f'db_leads_{y}'   
             db = client[db_name]
@@ -144,6 +143,16 @@ def main():
                     collection = db[collection_name]
                     csv_path = resource_path(f"leads/{y}/{collection_name}.csv")
                     df = pd.read_csv(csv_path)
+                    # 해당 컬렉션에 데이터가 있는지 확인
+                    if db[collection_name].count_documents({}) > 0:
+                        db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
+                        db.create_collection(collection_name)    # 컬렉션 재생성
+                        print(f"Collection '{collection_name}' was dropped and recreated.")
+                    else:
+                        # 컬렉션이 비어있다면 새로 생성 (필요한 경우)
+                        if collection_name not in db.list_collection_names():
+                            db.create_collection(collection_name)
+                            print(f"Collection '{collection_name}' was created.")
                     records = df.to_dict(orient='records')
                     collection.insert_many(records)
             else:
@@ -153,6 +162,16 @@ def main():
                     collection = db[collection_name]
                     csv_path = resource_path(f"leads/{y}/{collection_name}.csv")
                     df = pd.read_csv(csv_path)
+                    # 해당 컬렉션에 데이터가 있는지 확인
+                    if db[collection_name].count_documents({}) > 0:
+                        db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
+                        db.create_collection(collection_name)    # 컬렉션 재생성
+                        print(f"Collection '{collection_name}' was dropped and recreated.")
+                    else:
+                        # 컬렉션이 비어있다면 새로 생성 (필요한 경우)
+                        if collection_name not in db.list_collection_names():
+                            db.create_collection(collection_name)
+                            print(f"Collection '{collection_name}' was created.")
                     records = df.to_dict(orient='records')
                     collection.insert_many(records)
         st.write('Completed!')
