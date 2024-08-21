@@ -174,7 +174,7 @@ def main():
 
         # Weekly report
         st.write("Weekly Report")
-        def weekly_df(daily_df,i_year):
+        def display_weekly_df(daily_df,i_year):
             def convert_to_date_wrapped(date_str):
                 return convert_to_date(date_str, i_year)
             daily_df_melted = daily_df.melt(id_vars=['program'], var_name='Date', value_name='Value')
@@ -189,7 +189,7 @@ def main():
             weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
             return weekly_pivot_df
             
-        weekly_df = weekly_df(daily_df,i_year)
+        weekly_df = display_weekly_df(daily_df,i_year)
         
         st.dataframe(weekly_df)
             
