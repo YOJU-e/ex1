@@ -124,6 +124,7 @@ def main():
         collection = db[collection_name]
         data = list(collection.find())
         daily_df = pd.DataFrame(data)
+        daily_df = daily_df.drop('_id', axis=1)
         def daily_df_with_total (daily_df):
             # 각 행의 합계 계산하여 'Row_Total' 열 추가
             numeric_cols = daily_df.select_dtypes(include=['number']).columns # 열 선택
@@ -139,13 +140,13 @@ def main():
         daily_df_with_total = daily_df_with_total (daily_df)
         st.dataframe(daily_df_with_total)
 
-        def daily_col_sum_dataframe(daily_df):
-            daily_df.set_index('program', inplace=True)
-            column_sums = daily_df.sum(axis=0)
-            column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
-            return column_sums_df
-        daily_col_sum_df = daily_col_sum_dataframe(daily_df)
-        st.dataframe(daily_col_sum_df)
+        # def daily_col_sum_dataframe(daily_df):
+        #     daily_df.set_index('program', inplace=True)
+        #     column_sums = daily_df.sum(axis=0)
+        #     column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
+        #     return column_sums_df
+        # daily_col_sum_df = daily_col_sum_dataframe(daily_df)
+        # st.dataframe(daily_col_sum_df)
         
         
         #불러오기까지 성공, 나머지 합계 열 추가하는 것, 불러와지는지 확인하는 것까지 내일하기
