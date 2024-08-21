@@ -87,6 +87,68 @@ def calculate_total_leads(client, t_year, t_month):
 
     return df_total
 
+def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
+    st.session_state.w_cpl_df = True
+    df = pd.DataFrame({'program':programs})
+    df.set_index(df.columns[0], inplace=True)
+
+    for y in range(f_year,t_year+1):
+        db_name = f'db_leads_{y}'
+        db = client[db_name]
+        if t_year - f_year == 0:
+            for m in range(f_month,t_month+1):
+                e_month = number_to_month(m)
+                collection_name = f'{e_month}_{y}'
+                collection = db[collection_name]
+                data = list(collection.find())
+                df_table = pd.DataFrame(data)
+                df_table = df_table.drop('_id', axis=1)
+                df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
+                df_table.set_index(df_table.columns[0], inplace=True)
+                new_columns = [convert_to_date(col,y) for col in df_table.columns]
+                df_table.columns = new_columns
+                df = pd.concat([df, df_table], axis=1)
+        else:
+            if t_year - y == 0:
+                for m in range(1,t_month+1):
+                    e_month = number_to_month(m)
+                    collection_name = f'{e_month}_{y}'
+                    collection = db[collection_name]
+                    data = list(collection.find())
+                    df_table = pd.DataFrame(data)
+                    df_table = df_table.drop('_id', axis=1)
+                    df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
+                    df_table.set_index(df_table.columns[0], inplace=True)
+                    new_columns = [convert_to_date(col,y) for col in df_table.columns]
+                    df_table.columns = new_columns
+                    df = pd.concat([df, df_table], axis=1)
+            else:
+                for m in range(1,13):
+                    e_month = number_to_month(m)
+                    collection_name = f'{e_month}_{y}'
+                    collection = db[collection_name]
+                    data = list(collection.find())
+                    df_table = pd.DataFrame(data)
+                    df_table = df_table.drop('_id', axis=1)
+                    df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
+                    df_table.set_index(df_table.columns[0], inplace=True)
+                    new_columns = [convert_to_date(col,y) for col in df_table.columns]
+                    df_table.columns = new_columns
+                    df = pd.concat([df, df_table], axis=1)
+    # print(df)
+    df = df.T
+    df.index.name = 'Date'
+
+    # 주별로 그룹화하여 합계를 구함
+    weekly_df = df.resample('W').sum()
+
+    # 다시 원래 형태로 전치
+    weekly_df = weekly_df.T
+    weekly_df.columns = pd.to_datetime(weekly_df.columns)
+    weekly_df.columns = [col.date() for col in weekly_df.columns]
+
+    return weekly_df
+
 def resource_path(relative_path):
     try:
         # PyInstaller에서 실행 중인 경우
@@ -123,10 +185,10 @@ def main():
         st.session_state.weekly_df = False
     if 'yearly_df' not in st.session_state:
         st.session_state.yearly_df = False
-    # if 'w_cpl_df' not in st.session_state:
-    #     st.session_state.w_cpl_df = False
-    # if 't_cpl_df' not in st.session_state:
-    #     st.session_state.t_cpl_df = False
+    if 'w_cpl_df' not in st.session_state:
+        st.session_state.w_cpl_df = False
+    if 't_cpl_df' not in st.session_state:
+        st.session_state.t_cpl_df = False
 
     
     # mongoDB를 이용해서 데이터 주고받기        
@@ -260,6 +322,7 @@ def main():
             daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
             return daily_df
         daily_df_with_total = daily_df_with_total(daily_df)
+        st.session_state.daily_df_with_total = daily_df_with_total
         
         def daily_col_sum_dataframe(daily_df):
             column_sums = daily_df.sum(axis=0)
@@ -267,6 +330,7 @@ def main():
             return column_sums_df
       
         daily_col_sum_df = daily_col_sum_dataframe(daily_df)
+        st.session_state.daily_col_sum_df = daily_col_sum_df
 
         # Weekly report
         df = pd.DataFrame(data)
@@ -284,13 +348,9 @@ def main():
             return weekly_pivot_df
             
         weekly_df = display_weekly_df(df,i_year)
+        st.session_state.weekly_df = weekly_df
         # Yearly report 
         yearly_df = calculate_total_leads(client, t_year, t_month)
-        
-
-        st.session_state.daily_df_with_total = daily_df_with_total
-        st.session_state.daily_col_sum_df = daily_col_sum_df
-        st.session_state.weekly_df = weekly_df
         st.session_state.yearly_df = yearly_df
 
         if st.session_state.daily_df_with_total is not False:
@@ -473,408 +533,408 @@ def main():
         t_year = selected_t_year
         t_month = selected_t_month
 
-    #     # weekly cpl 계산
-    #     w_df = concat_d_df(programs, f_year, f_month, t_year, t_month)
-    #     # st.write(w_df)
-    #     # w_df = display_weekly_df2(d_df,i_year)
-    #     column_names = w_df.columns.tolist()
-    #     index_values = w_df.index.tolist()
+        # weekly cpl 계산
+        w_df = concat_d_df(programs, f_year, f_month, t_year, t_month)
+            
+        column_names = w_df.columns.tolist()
+        index_values = w_df.index.tolist()
 
-    #     for p in index_values:
-    #         if p == 'Actuarial Science (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Actuarial Science (PG)')
-    #                 cost = float(cost_AcS_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Actuarial Science (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Actuarial Science (UG)')
-    #                 cost = float(cost_AcS_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Applied Sciences (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Applied Sciences (PG)')
-    #                 cost = float(cost_ApS_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Applied Sciences (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Applied Sciences (UG)')
-    #                 cost = float(cost_ApS_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Architecture (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Architecture (PG)')
-    #                 cost = float(cost_A_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Architecture (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Architecture (UG)')
-    #                 cost = float(cost_A_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Business (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Business (PG)')
-    #                 cost = float(cost_B_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Business (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Business (UG)')
-    #                 cost = float(cost_B_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Engineering (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Engineering (PG)')
-    #                 cost = float(cost_E_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Engineering (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Engineering (UG)')
-    #                 cost = float(cost_E_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'FMHS (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('FMHS (PG)')
-    #                 cost = float(cost_FMHS_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'FMHS (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('FMHS (UG)')
-    #                 cost = float(cost_FMHS_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'FMHS (UG) - Nursing':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('FMHS (UG) - Nursing')
-    #                 cost = float(cost_FMHS_UG_N)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'FOSSLA (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('FOSSLA (PG)')
-    #                 cost = float(cost_FOSSLA_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'FOSSLA (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('FOSSLA (UG)')
-    #                 cost = float(cost_FOSSLA_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Foundation in Arts':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Foundation in Arts')
-    #                 cost = float(cost_F_art)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Foundation in Science':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Foundation in Science')
-    #                 cost = float(cost_F_sci)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'FPS (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('FPS (PG)')
-    #                 cost = float(cost_FPS_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'FPS (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('FPS (UG)')
-    #                 cost = float(cost_FPS_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'GBS (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('GBS (PG)')
-    #                 cost = float(cost_GBS_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Hospitality (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Hospitality (PG)')
-    #                 cost = float(cost_H_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Hospitality (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Hospitality (UG)')
-    #                 cost = float(cost_H_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'IASDA (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('IASDA (PG)')
-    #                 cost = float(cost_IASDA_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'IASDA (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('IASDA (UG)')
-    #                 cost = float(cost_IASDA_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'ICAD (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('ICAD (PG)')
-    #                 cost = float(cost_ICAD_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'ICAD (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('ICAD (UG)')
-    #                 cost = float(cost_ICAD_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'IMUS (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('IMUS (PG)')
-    #                 cost = float(cost_IMUS_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'IMUS (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('IMUS (UG)')
-    #                 cost = float(cost_IMUS_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'IT (PG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('IT (PG)')
-    #                 cost = float(cost_IT_PG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'IT (UG)':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('IT (UG)')
-    #                 cost = float(cost_IT_UG)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'Master & PhD Programme':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('Master & PhD Programme')
-    #                 cost = float(cost_MPhD)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'SEC-General Scholarship':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('SEC-General Scholarship')
-    #                 cost = float(cost_SEC_GS)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'SEC-Foundation':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('SEC-Foundation')
-    #                 cost = float(cost_SEC_F)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'SEC-Diploma & Foundation':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('SEC-Diploma & Foundation')
-    #                 cost = float(cost_SEC_DF)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'SEC-MARA Scholarship':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('SEC-MARA Scholarship')
-    #                 cost = float(cost_SEC_MS)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'SEC-Open Day/Enrolment Day/Info Day':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('SEC-Open Day/Enrolment Day/Info Day')
-    #                 cost = float(cost_SEC_OEI)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
-    #         if p == 'SEC-UEC':
-    #             for c in range(0, len(column_names)):
-    #                 i = index_values.index('SEC-UEC')
-    #                 cost = float(cost_SEC_UEC)
-    #                 value = cost/w_df.iloc[i, c]
-    #                 w_df.iloc[i, c] = value
+        for p in index_values:
+            if p == 'Actuarial Science (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Actuarial Science (PG)')
+                    cost = float(cost_AcS_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Actuarial Science (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Actuarial Science (UG)')
+                    cost = float(cost_AcS_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Applied Sciences (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Applied Sciences (PG)')
+                    cost = float(cost_ApS_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Applied Sciences (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Applied Sciences (UG)')
+                    cost = float(cost_ApS_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Architecture (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Architecture (PG)')
+                    cost = float(cost_A_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Architecture (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Architecture (UG)')
+                    cost = float(cost_A_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Business (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Business (PG)')
+                    cost = float(cost_B_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Business (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Business (UG)')
+                    cost = float(cost_B_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Engineering (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Engineering (PG)')
+                    cost = float(cost_E_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Engineering (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Engineering (UG)')
+                    cost = float(cost_E_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'FMHS (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('FMHS (PG)')
+                    cost = float(cost_FMHS_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'FMHS (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('FMHS (UG)')
+                    cost = float(cost_FMHS_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'FMHS (UG) - Nursing':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('FMHS (UG) - Nursing')
+                    cost = float(cost_FMHS_UG_N)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'FOSSLA (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('FOSSLA (PG)')
+                    cost = float(cost_FOSSLA_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'FOSSLA (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('FOSSLA (UG)')
+                    cost = float(cost_FOSSLA_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Foundation in Arts':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Foundation in Arts')
+                    cost = float(cost_F_art)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Foundation in Science':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Foundation in Science')
+                    cost = float(cost_F_sci)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'FPS (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('FPS (PG)')
+                    cost = float(cost_FPS_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'FPS (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('FPS (UG)')
+                    cost = float(cost_FPS_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'GBS (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('GBS (PG)')
+                    cost = float(cost_GBS_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Hospitality (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Hospitality (PG)')
+                    cost = float(cost_H_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Hospitality (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Hospitality (UG)')
+                    cost = float(cost_H_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'IASDA (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('IASDA (PG)')
+                    cost = float(cost_IASDA_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'IASDA (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('IASDA (UG)')
+                    cost = float(cost_IASDA_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'ICAD (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('ICAD (PG)')
+                    cost = float(cost_ICAD_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'ICAD (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('ICAD (UG)')
+                    cost = float(cost_ICAD_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'IMUS (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('IMUS (PG)')
+                    cost = float(cost_IMUS_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'IMUS (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('IMUS (UG)')
+                    cost = float(cost_IMUS_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'IT (PG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('IT (PG)')
+                    cost = float(cost_IT_PG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'IT (UG)':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('IT (UG)')
+                    cost = float(cost_IT_UG)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'Master & PhD Programme':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('Master & PhD Programme')
+                    cost = float(cost_MPhD)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'SEC-General Scholarship':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('SEC-General Scholarship')
+                    cost = float(cost_SEC_GS)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'SEC-Foundation':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('SEC-Foundation')
+                    cost = float(cost_SEC_F)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'SEC-Diploma & Foundation':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('SEC-Diploma & Foundation')
+                    cost = float(cost_SEC_DF)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'SEC-MARA Scholarship':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('SEC-MARA Scholarship')
+                    cost = float(cost_SEC_MS)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'SEC-Open Day/Enrolment Day/Info Day':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('SEC-Open Day/Enrolment Day/Info Day')
+                    cost = float(cost_SEC_OEI)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
+            if p == 'SEC-UEC':
+                for c in range(0, len(column_names)):
+                    i = index_values.index('SEC-UEC')
+                    cost = float(cost_SEC_UEC)
+                    value = cost/w_df.iloc[i, c]
+                    w_df.iloc[i, c] = value
 
-    #     st.write(f'{f_month}/{f_year}_{t_month}/{t_year}')
-    #     if st.session_state.w_cpl_df in st.session_state:
-    #         st.session_state.t_cpl_df = True
-    #     d_df = concat_d_df(programs, f_year, f_month, t_year, t_month)
-    #     numeric_cols = d_df.select_dtypes(include=['number']).columns # 열 선택
-    #     d_df['Total_Leads'] = d_df[numeric_cols].sum(axis=1)
-    #     # st.write(d_df)
-    #     #cost
-    #     cost_dic = {}
-    #     for p in index_values:
-    #         if p == 'Actuarial Science (PG)':
-    #             i = index_values.index('Actuarial Science (PG)')
-    #             cost = float(cost_AcS_PG)
-    #             cost_dic[p]=cost
-    #         if p == 'Actuarial Science (UG)':
-    #                 i = index_values.index('Actuarial Science (UG)')
-    #                 cost = float(cost_AcS_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Applied Sciences (PG)':
-    #                 i = index_values.index('Applied Sciences (PG)')
-    #                 cost = float(cost_ApS_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Applied Sciences (UG)':
-    #                 i = index_values.index('Applied Sciences (UG)')
-    #                 cost = float(cost_ApS_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Architecture (PG)':
-    #                 i = index_values.index('Architecture (PG)')
-    #                 cost = float(cost_A_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Architecture (UG)':
-    #                 i = index_values.index('Architecture (UG)')
-    #                 cost = float(cost_A_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Business (PG)':
-    #                 cost_dic[p]=cost
-    #                 i = index_values.index('Business (PG)')
-    #                 cost = float(cost_B_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Business (UG)':
-    #                 i = index_values.index('Business (UG)')
-    #                 cost = float(cost_B_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Engineering (PG)':
-    #                 i = index_values.index('Engineering (PG)')
-    #                 cost = float(cost_E_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Engineering (UG)':
-    #                 i = index_values.index('Engineering (UG)')
-    #                 cost = float(cost_E_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'FMHS (PG)':
-    #                 i = index_values.index('FMHS (PG)')
-    #                 cost = float(cost_FMHS_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'FMHS (UG)':
-    #                 i = index_values.index('FMHS (UG)')
-    #                 cost = float(cost_FMHS_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'FMHS (UG) - Nursing':
-    #                 i = index_values.index('FMHS (UG) - Nursing')
-    #                 cost = float(cost_FMHS_UG_N)
-    #                 cost_dic[p]=cost
-    #         if p == 'FOSSLA (PG)':
-    #                 i = index_values.index('FOSSLA (PG)')
-    #                 cost = float(cost_FOSSLA_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'FOSSLA (UG)':
-    #                 i = index_values.index('FOSSLA (UG)')
-    #                 cost = float(cost_FOSSLA_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Foundation in Arts':
-    #                 i = index_values.index('Foundation in Arts')
-    #                 cost = float(cost_F_art)
-    #                 cost_dic[p]=cost
-    #         if p == 'Foundation in Science':
-    #                 i = index_values.index('Foundation in Science')
-    #                 cost = float(cost_F_sci)
-    #                 cost_dic[p]=cost
-    #         if p == 'FPS (PG)':
-    #                 i = index_values.index('FPS (PG)')
-    #                 cost = float(cost_FPS_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'FPS (UG)':
-    #                 i = index_values.index('FPS (UG)')
-    #                 cost = float(cost_FPS_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'GBS (PG)':
-    #                 i = index_values.index('GBS (PG)')
-    #                 cost = float(cost_GBS_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Hospitality (PG)':
-    #                 i = index_values.index('Hospitality (PG)')
-    #                 cost = float(cost_H_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Hospitality (UG)':
-    #                 i = index_values.index('Hospitality (UG)')
-    #                 cost = float(cost_H_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'IASDA (PG)':
-    #                 i = index_values.index('IASDA (PG)')
-    #                 cost = float(cost_IASDA_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'IASDA (UG)':
-    #                 i = index_values.index('IASDA (UG)')
-    #                 cost = float(cost_IASDA_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'ICAD (PG)':
-    #                 i = index_values.index('ICAD (PG)')
-    #                 cost = float(cost_ICAD_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'ICAD (UG)':
-    #                 i = index_values.index('ICAD (UG)')
-    #                 cost = float(cost_ICAD_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'IMUS (PG)':
-    #                 i = index_values.index('IMUS (PG)')
-    #                 cost = float(cost_IMUS_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'IMUS (UG)':
-    #                 i = index_values.index('IMUS (UG)')
-    #                 cost = float(cost_IMUS_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'IT (PG)':
-    #                 i = index_values.index('IT (PG)')
-    #                 cost = float(cost_IT_PG)
-    #                 cost_dic[p]=cost
-    #         if p == 'IT (UG)':
-    #                 i = index_values.index('IT (UG)')
-    #                 cost = float(cost_IT_UG)
-    #                 cost_dic[p]=cost
-    #         if p == 'Master & PhD Programme':
-    #                 i = index_values.index('Master & PhD Programme')
-    #                 cost = float(cost_MPhD)
-    #                 cost_dic[p]=cost
-    #         if p == 'SEC-General Scholarship':
-    #                 i = index_values.index('SEC-General Scholarship')
-    #                 cost = float(cost_SEC_GS)
-    #                 cost_dic[p]=cost
-    #         if p == 'SEC-Foundation':
-    #                 i = index_values.index('SEC-Foundation')
-    #                 cost = float(cost_SEC_F)
-    #                 cost_dic[p]=cost
-    #         if p == 'SEC-Diploma & Foundation':
-    #                 i = index_values.index('SEC-Diploma & Foundation')
-    #                 cost = float(cost_SEC_DF)
-    #                 cost_dic[p]=cost
-    #         if p == 'SEC-MARA Scholarship':
-    #                 i = index_values.index('SEC-MARA Scholarship')
-    #                 cost = float(cost_SEC_MS)
-    #                 cost_dic[p]=cost
-    #         if p == 'SEC-Open Day/Enrolment Day/Info Day':
-    #                 i = index_values.index('SEC-Open Day/Enrolment Day/Info Day')
-    #                 cost = float(cost_SEC_OEI)
-    #                 cost_dic[p]=cost
-    #         if p == 'SEC-UEC':
-    #                 i = index_values.index('SEC-UEC')
-    #                 cost = float(cost_SEC_UEC)
-    #                 cost_dic[p]=cost
-    #     d_df['Cost'] = d_df.index.map(cost_dic)
+        st.write(f'{f_month}/{f_year}_{t_month}/{t_year}')
+        if st.session_state.w_cpl_df in st.session_state:
+            st.session_state.t_cpl_df = True
+        d_df = concat_d_df(programs, f_year, f_month, t_year, t_month)
+        numeric_cols = d_df.select_dtypes(include=['number']).columns # 열 선택
+        d_df['Total_Leads'] = d_df[numeric_cols].sum(axis=1)
+        # st.write(d_df)
+        
+        #cost
+        cost_dic = {}
+        for p in index_values:
+            if p == 'Actuarial Science (PG)':
+                i = index_values.index('Actuarial Science (PG)')
+                cost = float(cost_AcS_PG)
+                cost_dic[p]=cost
+            if p == 'Actuarial Science (UG)':
+                    i = index_values.index('Actuarial Science (UG)')
+                    cost = float(cost_AcS_UG)
+                    cost_dic[p]=cost
+            if p == 'Applied Sciences (PG)':
+                    i = index_values.index('Applied Sciences (PG)')
+                    cost = float(cost_ApS_PG)
+                    cost_dic[p]=cost
+            if p == 'Applied Sciences (UG)':
+                    i = index_values.index('Applied Sciences (UG)')
+                    cost = float(cost_ApS_UG)
+                    cost_dic[p]=cost
+            if p == 'Architecture (PG)':
+                    i = index_values.index('Architecture (PG)')
+                    cost = float(cost_A_PG)
+                    cost_dic[p]=cost
+            if p == 'Architecture (UG)':
+                    i = index_values.index('Architecture (UG)')
+                    cost = float(cost_A_UG)
+                    cost_dic[p]=cost
+            if p == 'Business (PG)':
+                    cost_dic[p]=cost
+                    i = index_values.index('Business (PG)')
+                    cost = float(cost_B_PG)
+                    cost_dic[p]=cost
+            if p == 'Business (UG)':
+                    i = index_values.index('Business (UG)')
+                    cost = float(cost_B_UG)
+                    cost_dic[p]=cost
+            if p == 'Engineering (PG)':
+                    i = index_values.index('Engineering (PG)')
+                    cost = float(cost_E_PG)
+                    cost_dic[p]=cost
+            if p == 'Engineering (UG)':
+                    i = index_values.index('Engineering (UG)')
+                    cost = float(cost_E_UG)
+                    cost_dic[p]=cost
+            if p == 'FMHS (PG)':
+                    i = index_values.index('FMHS (PG)')
+                    cost = float(cost_FMHS_PG)
+                    cost_dic[p]=cost
+            if p == 'FMHS (UG)':
+                    i = index_values.index('FMHS (UG)')
+                    cost = float(cost_FMHS_UG)
+                    cost_dic[p]=cost
+            if p == 'FMHS (UG) - Nursing':
+                    i = index_values.index('FMHS (UG) - Nursing')
+                    cost = float(cost_FMHS_UG_N)
+                    cost_dic[p]=cost
+            if p == 'FOSSLA (PG)':
+                    i = index_values.index('FOSSLA (PG)')
+                    cost = float(cost_FOSSLA_PG)
+                    cost_dic[p]=cost
+            if p == 'FOSSLA (UG)':
+                    i = index_values.index('FOSSLA (UG)')
+                    cost = float(cost_FOSSLA_UG)
+                    cost_dic[p]=cost
+            if p == 'Foundation in Arts':
+                    i = index_values.index('Foundation in Arts')
+                    cost = float(cost_F_art)
+                    cost_dic[p]=cost
+            if p == 'Foundation in Science':
+                    i = index_values.index('Foundation in Science')
+                    cost = float(cost_F_sci)
+                    cost_dic[p]=cost
+            if p == 'FPS (PG)':
+                    i = index_values.index('FPS (PG)')
+                    cost = float(cost_FPS_PG)
+                    cost_dic[p]=cost
+            if p == 'FPS (UG)':
+                    i = index_values.index('FPS (UG)')
+                    cost = float(cost_FPS_UG)
+                    cost_dic[p]=cost
+            if p == 'GBS (PG)':
+                    i = index_values.index('GBS (PG)')
+                    cost = float(cost_GBS_PG)
+                    cost_dic[p]=cost
+            if p == 'Hospitality (PG)':
+                    i = index_values.index('Hospitality (PG)')
+                    cost = float(cost_H_PG)
+                    cost_dic[p]=cost
+            if p == 'Hospitality (UG)':
+                    i = index_values.index('Hospitality (UG)')
+                    cost = float(cost_H_UG)
+                    cost_dic[p]=cost
+            if p == 'IASDA (PG)':
+                    i = index_values.index('IASDA (PG)')
+                    cost = float(cost_IASDA_PG)
+                    cost_dic[p]=cost
+            if p == 'IASDA (UG)':
+                    i = index_values.index('IASDA (UG)')
+                    cost = float(cost_IASDA_UG)
+                    cost_dic[p]=cost
+            if p == 'ICAD (PG)':
+                    i = index_values.index('ICAD (PG)')
+                    cost = float(cost_ICAD_PG)
+                    cost_dic[p]=cost
+            if p == 'ICAD (UG)':
+                    i = index_values.index('ICAD (UG)')
+                    cost = float(cost_ICAD_UG)
+                    cost_dic[p]=cost
+            if p == 'IMUS (PG)':
+                    i = index_values.index('IMUS (PG)')
+                    cost = float(cost_IMUS_PG)
+                    cost_dic[p]=cost
+            if p == 'IMUS (UG)':
+                    i = index_values.index('IMUS (UG)')
+                    cost = float(cost_IMUS_UG)
+                    cost_dic[p]=cost
+            if p == 'IT (PG)':
+                    i = index_values.index('IT (PG)')
+                    cost = float(cost_IT_PG)
+                    cost_dic[p]=cost
+            if p == 'IT (UG)':
+                    i = index_values.index('IT (UG)')
+                    cost = float(cost_IT_UG)
+                    cost_dic[p]=cost
+            if p == 'Master & PhD Programme':
+                    i = index_values.index('Master & PhD Programme')
+                    cost = float(cost_MPhD)
+                    cost_dic[p]=cost
+            if p == 'SEC-General Scholarship':
+                    i = index_values.index('SEC-General Scholarship')
+                    cost = float(cost_SEC_GS)
+                    cost_dic[p]=cost
+            if p == 'SEC-Foundation':
+                    i = index_values.index('SEC-Foundation')
+                    cost = float(cost_SEC_F)
+                    cost_dic[p]=cost
+            if p == 'SEC-Diploma & Foundation':
+                    i = index_values.index('SEC-Diploma & Foundation')
+                    cost = float(cost_SEC_DF)
+                    cost_dic[p]=cost
+            if p == 'SEC-MARA Scholarship':
+                    i = index_values.index('SEC-MARA Scholarship')
+                    cost = float(cost_SEC_MS)
+                    cost_dic[p]=cost
+            if p == 'SEC-Open Day/Enrolment Day/Info Day':
+                    i = index_values.index('SEC-Open Day/Enrolment Day/Info Day')
+                    cost = float(cost_SEC_OEI)
+                    cost_dic[p]=cost
+            if p == 'SEC-UEC':
+                    i = index_values.index('SEC-UEC')
+                    cost = float(cost_SEC_UEC)
+                    cost_dic[p]=cost
+        d_df['Cost'] = d_df.index.map(cost_dic)
 
-    #     #(Total) CPL
-    #     d_df['CPL'] = d_df['Cost'] / d_df['Total_Leads']
-    #     t_df = pd.DataFrame()
-    #     t_df = d_df[['Cost','Total_Leads','CPL']]
-    #     st.session_state.w_cpl_df = w_df
-    #     st.session_state.t_cpl_df = t_df
+        #(Total) CPL
+        d_df['CPL'] = d_df['Cost'] / d_df['Total_Leads']
+        t_df = pd.DataFrame()
+        t_df = d_df[['Cost','Total_Leads','CPL']]
+        st.session_state.w_cpl_df = w_df
+        st.session_state.t_cpl_df = t_df
 
-    # if st.session_state.w_cpl_df is not False:
-    #     st.write(st.session_state.w_cpl_df)
-    #     st.write(st.session_state.t_cpl_df)
+    if st.session_state.w_cpl_df is not False:
+        st.write(st.session_state.w_cpl_df)
+        st.write(st.session_state.t_cpl_df)
     
     client.close()
 
