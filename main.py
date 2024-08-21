@@ -124,6 +124,8 @@ def main():
         collection_name = f'{e_month}_{i_year}'
         collection = db[collection_name]
         data = list(collection.find())
+        
+        # Daily report
         daily_df = pd.DataFrame(data)
         daily_df = daily_df.drop('_id', axis=1)
         daily_df.set_index(daily_df.columns[0], inplace=True)
@@ -141,6 +143,11 @@ def main():
       
         daily_col_sum_df = daily_col_sum_dataframe(daily_df)
         st.dataframe(daily_col_sum_df)
+
+        # Weekly report
+        st.write("Weekly Report")
+        
+        
         
         
         #불러오기까지 성공, 나머지 합계 열 추가하는 것, 불러와지는지 확인하는 것까지 내일하기
