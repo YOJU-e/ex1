@@ -46,7 +46,7 @@ def convert_to_date(date_str, i_year):
         print(f"Error converting {date_str}: {e}")
         return None
 
-def calculate_total_leads(t_year, t_month):
+def calculate_total_leads(client, t_year, t_month):
     df_total = pd.DataFrame()
     for y in range(2022,t_year+1):
         db_name = f'db_leads_{y}'
@@ -229,7 +229,7 @@ def main():
         st.dataframe(weekly_df)
         # Yearly report
         st.write('Yearly Report')  
-        yearly_df = calculate_total_leads(t_year, t_month)
+        yearly_df = calculate_total_leads(client, t_year, t_month)
         st.dataframe(yearly_df)
         
         
