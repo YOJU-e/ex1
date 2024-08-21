@@ -534,7 +534,7 @@ def main():
         t_month = selected_t_month
 
         # weekly cpl 계산
-        w_df = concat_d_df(programs, f_year, f_month, t_year, t_month)
+        w_df = concat_d_df(client, programs, f_year, f_month, t_year, t_month)
             
         column_names = w_df.columns.tolist()
         index_values = w_df.index.tolist()
@@ -766,7 +766,7 @@ def main():
         st.write(f'{f_month}/{f_year}_{t_month}/{t_year}')
         if st.session_state.w_cpl_df in st.session_state:
             st.session_state.t_cpl_df = True
-        d_df = concat_d_df(programs, f_year, f_month, t_year, t_month)
+        d_df = concat_d_df(client, programs, f_year, f_month, t_year, t_month)
         numeric_cols = d_df.select_dtypes(include=['number']).columns # 열 선택
         d_df['Total_Leads'] = d_df[numeric_cols].sum(axis=1)
         # st.write(d_df)
