@@ -293,14 +293,14 @@ def main():
         st.session_state.weekly_df = weekly_df
         st.session_state.yearly_df = yearly_df
 
-        
-        st.write('Daily Report')
-        st.dataframe(st.session_state.daily_df_with_total)
-        st.dataframe(st.session_state.daily_col_sum_df)
-        st.write("Weekly Report")
-        st.dataframe(st.session_state.weekly_df)
-        st.write('Yearly Report')
-        st.dataframe(st.session_state.yearly_df)
+        if st.session_state.daily_df_with_total is not False:
+            st.write('Daily Report')
+            st.dataframe(st.session_state.daily_df_with_total)
+            st.dataframe(st.session_state.daily_col_sum_df)
+            st.write("Weekly Report")
+            st.dataframe(st.session_state.weekly_df)
+            st.write('Yearly Report')
+            st.dataframe(st.session_state.yearly_df)
  
 
 
