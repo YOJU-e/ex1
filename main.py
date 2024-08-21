@@ -47,6 +47,7 @@ def convert_to_date(date_str, i_year):
         return None
 
 def calculate_total_leads(client, t_year, t_month):
+    st.session_state.yearly_df = True
     df_total = pd.DataFrame()
     for y in range(2022,t_year+1):
         db_name = f'db_leads_{y}'
@@ -365,7 +366,7 @@ def main():
         yearly_df = calculate_total_leads(client, t_year, t_month)
         st.session_state.yearly_df = yearly_df
 
-        if st.session_state.daily_df_with_total is not False:
+        if st.session_state.yearly_df is not False:
             st.write('Daily Report')
             st.dataframe(st.session_state.daily_df_with_total)
             st.dataframe(st.session_state.daily_col_sum_df)
