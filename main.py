@@ -153,9 +153,9 @@ def main():
         data = list(collection.find())
         
         # Daily report
-        daily_df = pd.DataFrame(data)
-        daily_df = daily_df.drop('_id', axis=1)
-        
+        df = pd.DataFrame(data)
+        df = df.drop('_id', axis=1)
+        daily_df = df
         def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
             daily_df.set_index(daily_df.columns[0], inplace=True)
             numeric_cols = daily_df.select_dtypes(include=['number']).columns 
@@ -174,22 +174,22 @@ def main():
 
         # Weekly report
         st.write("Weekly Report")
-        def display_weekly_df(daily_df,i_year):
+        def display_weekly_df(df,i_year):
             def convert_to_date_wrapped(date_str):
                 return convert_to_date(date_str, i_year)
-            daily_df_melted = daily_df.melt(id_vars=['program'], var_name='Date', value_name='Value')
-            daily_df_melted['Date'] = daily_df_melted['Date'].apply(convert_to_date_wrapped)
+            df_melted = df.melt(id_vars=['program'], var_name='Date', value_name='Value')
+            df_melted['Date'] = df_melted['Date'].apply(convert_to_date_wrapped)
             # 날짜를 포함하는 주 식별 (각 날짜를 해당 주의 월요일로 변환)
-            daily_df_melted['Week'] = daily_df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)
+            df_melted['Week'] = df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)
             # 주별 데이터 집계 (예: 값의 합계)
-            weekly_df = daily_df_melted.groupby(['program', 'Week']).agg({'Value': 'sum'}).reset_index()
+            weekly_df = df_melted.groupby(['program', 'Week']).agg({'Value': 'sum'}).reset_index()
             # 주(week) 기반 데이터프레임으로 Pivot
             weekly_pivot_df = weekly_df.pivot(index='program', columns='Week', values='Value').fillna(0)
             weekly_pivot_df.loc['Total'] = weekly_pivot_df.sum()    # 각 열의 값을 합
             weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
             return weekly_pivot_df
             
-        weekly_df = display_weekly_df(daily_df,i_year)
+        weekly_df = display_weekly_df(df,i_year)
         
         st.dataframe(weekly_df)
             
