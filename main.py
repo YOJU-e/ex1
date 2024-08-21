@@ -112,6 +112,23 @@ def main():
     t_month = today_date.month
     t_year = today_date.year
 
+    # Session initialization
+    # if 'updated' not in st.session_state:
+    #     st.session_state.updated = False
+    if 'daily_df_with_total' not in st.session_state:
+        st.session_state.daily_df_with_total = False
+    if 'daily_col_sum_df' not in st.session_state:
+        st.session_state.daily_col_sum_df = False
+    if 'weekly_df' not in st.session_state:
+        st.session_state.weekly_df = False
+    if 'yearly_df' not in st.session_state:
+        st.session_state.yearly_df = False
+    # if 'w_cpl_df' not in st.session_state:
+    #     st.session_state.w_cpl_df = False
+    # if 't_cpl_df' not in st.session_state:
+    #     st.session_state.t_cpl_df = False
+
+    
     # mongoDB를 이용해서 데이터 주고받기        
     with open('config.json') as config_file:
         config = json.load(config_file)
@@ -243,8 +260,7 @@ def main():
             numeric_cols = daily_df.select_dtypes(include=['number']).columns 
             daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
             return daily_df
-        daily_df_with_total = daily_df_with_total (daily_df)
-        st.dataframe(daily_df_with_total)
+        daily_df_with_total = daily_df_with_total(daily_df)
         
         def daily_col_sum_dataframe(daily_df):
             column_sums = daily_df.sum(axis=0)
@@ -252,10 +268,8 @@ def main():
             return column_sums_df
       
         daily_col_sum_df = daily_col_sum_dataframe(daily_df)
-        st.dataframe(daily_col_sum_df)
 
         # Weekly report
-        st.write("Weekly Report")
         df = pd.DataFrame(data)
         df = df.drop('_id', axis=1)
         def display_weekly_df(df,i_year):
@@ -271,28 +285,28 @@ def main():
             return weekly_pivot_df
             
         weekly_df = display_weekly_df(df,i_year)
-        st.dataframe(weekly_df)
-        # Yearly report
-        st.write('Yearly Report')  
+        # Yearly report 
         yearly_df = calculate_total_leads(client, t_year, t_month)
-        st.dataframe(yearly_df)
-        
-    
-    client.close()
+        client.close()
 
-    # Session initialization
-    # if 'updated' not in st.session_state:
-    #     st.session_state.updated = False
-    # if 'daily_col_sum_df' not in st.session_state:
-    #     st.session_state.daily_col_displayed = False
-    # if 'daily_displayed' not in st.session_state:
-    #     st.session_state.daily_displayed = False
-    # if 'weekly_displayed' not in st.session_state:
-    #     st.session_state.weekly_displayed = False
-    # if 'w_cpl_df' not in st.session_state:
-    #     st.session_state.w_cpl_df = False
-    # if 't_cpl_df' not in st.session_state:
-    #     st.session_state.t_cpl_df = False
+        st.session_state.daily_df_with_total = daily_df_with_total
+        st.session_state.daily_col_sum_df = daily_col_sum_df
+        st.session_state.weekly_df = weekly_df
+        st.session_state.yearly_df = yearly_df
+
+        if st.session_state.yearly_df in st.session_state:
+            st.write(f'Daily Report')
+            st.dataframe(st.session_state.daily_df_with_total)
+            st.dataframe(st.session_state.daily_col_sum_df)
+            st.write("Weekly Report")
+            st.dataframe(st.session_state.weekly_df)
+            st.write('Yearly Report')
+            st.dataframe(st.session_state.yearly_df)
+ 
+    
+    
+
+    
 
     # # 옵션 파일 경로, 나머지 2개 파일 경로, 다운 디렉토리
     # # 주소 입력 창
@@ -303,75 +317,9 @@ def main():
     # if download_dir:
     #     st.session_state['download_dir'] = download_dir
 
-    # #데일리 리트 체크 화면
-    # st.subheader('Leads')
-    # # st.markdown('---')
-    # years = list(range(2022, t_year + 1))
-    # months = list(range(1, 13))
 
-    # col1, col2, col3 = st.columns([1, 1, 1])
-    # with col1:
-    #     selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_d_check')
-    # with col2:
-    #     selected_month = st.selectbox('Select Month', months, index=t_month-1, key='month_select_for_d_check')
-    # with col3:
-    #     submit_btn = st.button('Submit')
 
-    # if submit_btn:
-    #     i_year = selected_year
-    #     i_month = selected_month
-    #     e_month = number_to_month(i_month)
-    #     db_name = f'EXDB_{i_year}.db'   # t_year, t_month
-    #     file_name = f"{e_month}_{i_year}"
-    #     print(i_month,i_year,e_month)
-    #     #레포에 저장된 csv파일 가져와서 접근하기 
-    #     selected_csv_path = resource_path(f"leads/{i_year}/{file_name}.csv")
-    #     daily_df = pd.read_csv(selected_csv_path)
-    #     #불러오기까지 성공, 나머지 합계 열 추가하는 것, 불러와지는지 확인하는 것까지 내일하기
-        
-        
-        # def display_dataframe(db_name,table_name):   #이거 다시 수정해야함.
-        #     # 각 행의 합계 계산하여 'Row_Total' 열 추가
-        #     numeric_cols = df_table.select_dtypes(include=['number']).columns # 열 선택
-        #     df_table['Total'] = df_table[numeric_cols].sum(axis=1)
-
-        #     # 각 열의 합계 계산하여 마지막 행 추가
-        #     total_row = df_table[numeric_cols].sum()
-        #     total_row['Total'] = total_row.sum()  # 'Total' 열의 총 합
-        #     total_row['program'] = 'Total_Leads'
-        #     total_row_df = pd.DataFrame(total_row).transpose()
-        #     df_table = pd.concat([df_table, total_row_df], ignore_index=True)
-
-        #     return df_table
-    #     daily_col_sum_df = daily_col_sum_dataframe(db_name,table_name)
-    #     daily_df2 = daily_dataframe(db_name,table_name)
-    #     # daily_df2.columns = pd.to_datetime(daily_df2.columns)
-    #     # daily_df2.columns = [col.date() for col in daily_df2.columns]
-    #     numeric_cols = daily_df2.select_dtypes(include=['number']).columns # 열 선택
-    #     daily_df2['Total'] = daily_df2[numeric_cols].sum(axis=1)
-
-    #     weekly_df = display_weekly_dataframe(daily_df,i_year)
-    #     yearly_df = calculate_total_leads(t_year, t_month)
-    #     yearly_df.set_index(yearly_df.columns[0], inplace=True)
-
-    #     st.session_state.daily_df = daily_df
-    #     st.session_state.daily_df2 = daily_df2
-    #     st.session_state.daily_col_sum_df = daily_col_sum_df
-    #     # st.session_state.daily_row_sum_df = daily_row_sum_df
-    #     st.session_state.weekly_df = weekly_df
-    #     st.session_state.yearly_df = yearly_df
-
-    # if st.session_state.weekly_displayed and 'daily_df2' in st.session_state:
-    #     st.write(f'Daily Report')
-    #     st.dataframe(st.session_state.daily_df2.style.set_sticky())
-    #     st.dataframe(st.session_state.daily_col_sum_df)
-    #     # st.dataframe(st.session_state.daily_row_sum_df)
-
-    #     st.write("Weekly Report")
-    #     st.dataframe(st.session_state.weekly_df)
-
-    #     st.write('Yearly Report')
-    #     st.dataframe(st.session_state.yearly_df)
+    
 
     # #CPL 체크 화면
     # st.markdown('---')
