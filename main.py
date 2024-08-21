@@ -99,13 +99,6 @@ def main():
         records = df.to_dict(orient='records')
         collection.insert_many(records)    # MongoDB에 데이터 삽입
         st.write('Updated!')
-        
-        data = fetch_data()    # 데이터 표시
-        if data:
-            for student in data:
-                st.write(student)
-        else:
-            st.write("No data found.")
 
     st.markdown('---')
     #데일리 리트 체크 화면
