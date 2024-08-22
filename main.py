@@ -370,14 +370,14 @@ def main():
         yearly_df = calculate_total_leads(client, t_year, t_month)
         st.session_state.yearly_df = yearly_df
 
-    if st.session_state.yearly_df in st.session_state:
-        st.write('Daily Report')
-        st.dataframe(st.session_state.daily_df_with_total)
-        st.dataframe(st.session_state.daily_col_sum_df)
-        st.write("Weekly Report")
-        st.dataframe(st.session_state.weekly_df)
-        st.write('Yearly Report')
-        st.dataframe(st.session_state.yearly_df)
+        if st.session_state.yearly_df in st.session_state:
+            st.write('Daily Report')
+            st.dataframe(st.session_state.daily_df_with_total)
+            st.dataframe(st.session_state.daily_col_sum_df)
+            st.write("Weekly Report")
+            st.dataframe(st.session_state.weekly_df)
+            st.write('Yearly Report')
+            st.dataframe(st.session_state.yearly_df)
 
     st.write(st.session_state)
  
