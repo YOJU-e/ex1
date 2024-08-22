@@ -298,7 +298,8 @@ def main():
                 print(f"Collection '{collection_name}' was created.")
         records = df.to_dict(orient='records')
         collection.insert_many(records)
-        
+        # st.write(st.session_state.updated)
+    if st.session_state.updated is not '':
         st.write(st.session_state.updated)
 
     st.markdown('---')
