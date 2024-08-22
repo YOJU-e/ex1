@@ -160,8 +160,6 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 def main():
-    st.write(st.session_state)
-        
     st.title('LeadDataAutoReturn')
     st.markdown('---')
     Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
@@ -306,7 +304,7 @@ def main():
     #데일리 리트 체크 화면
     st.subheader('Leads')
     # st.markdown('---')
-    st.write(st.session_state)
+    
     years = list(range(2022, t_year + 1))
     months = list(range(1, 13))
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -380,6 +378,8 @@ def main():
             st.dataframe(st.session_state.weekly_df)
             st.write('Yearly Report')
             st.dataframe(st.session_state.yearly_df)
+
+    st.write(st.session_state)
  
     # # 옵션 파일 경로, 나머지 2개 파일 경로, 다운 디렉토리
     # # 주소 입력 창
