@@ -161,9 +161,6 @@ def resource_path(relative_path):
 
 def main():
     st.write(st.session_state)
-    st.write("Detailed view of session state:")
-    for key, value in st.session_state.items():
-        st.write(f"{key}: {value}")
         
     st.title('LeadDataAutoReturn')
     st.markdown('---')
@@ -310,9 +307,6 @@ def main():
     st.subheader('Leads')
     # st.markdown('---')
     st.write(st.session_state)
-    st.write("Detailed view of session state:")
-    for key, value in st.session_state.items():
-        st.write(f"{key}: {value}")
     years = list(range(2022, t_year + 1))
     months = list(range(1, 13))
     col1, col2, col3 = st.columns([1, 1, 1])
