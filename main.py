@@ -7,7 +7,6 @@ from datetime import datetime, date
 import time
 import json
 
-
 def number_to_month(month):
     months = {
         "January": 1, "February": 2, "March": 3, "April": 4,
@@ -298,7 +297,7 @@ def main():
                 print(f"Collection '{collection_name}' was created.")
         records = df.to_dict(orient='records')
         collection.insert_many(records)
-        # st.write(st.session_state.updated)
+
     if st.session_state.updated is not '':
         st.write(st.session_state.updated)
 
@@ -380,18 +379,6 @@ def main():
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
         st.dataframe(st.session_state.yearly_df)
-
-    st.write(st.session_state)
- 
-    # # 옵션 파일 경로, 나머지 2개 파일 경로, 다운 디렉토리
-    # # 주소 입력 창
-    # if 'download_dir' not in st.session_state:
-    #     st.session_state['download_dir'] = ''
-
-    # download_dir = st.text_input('Download Dir: ',"C:/Users/your_username/Downloads")
-    # if download_dir:
-    #     st.session_state['download_dir'] = download_dir
-
 
     # #CPL 체크 화면
     st.markdown('---')
