@@ -175,8 +175,8 @@ def main():
     t_year = today_date.year
 
     # Session initialization
-    # if 'updated' not in st.session_state:
-    #     st.session_state.updated = False
+    if 'updated' not in st.session_state:
+        st.session_state.updated = False
     if 'daily_df_with_total' not in st.session_state:
         st.session_state.daily_df_with_total = False
     if 'daily_col_sum_df' not in st.session_state:
@@ -297,6 +297,7 @@ def main():
                 print(f"Collection '{collection_name}' was created.")
         records = df.to_dict(orient='records')
         collection.insert_many(records)
+        st.session_state.updated = True
         
         st.write('Updated!')
 
