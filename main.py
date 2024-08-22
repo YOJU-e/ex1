@@ -176,7 +176,7 @@ def main():
 
     # Session initialization
     if 'updated' not in st.session_state:
-        st.session_state.updated = False
+        st.session_state.updated = ''
     if 'daily_df_with_total' not in st.session_state:
         st.session_state.daily_df_with_total = False
     if 'daily_col_sum_df' not in st.session_state:
@@ -274,6 +274,7 @@ def main():
         update_btn = st.button('Update')
 
     if update_btn:
+        st.session_state.updated = 'Updated!'
         i_year = selected_year
         i_month = selected_month
         e_month = number_to_month(i_month)
@@ -285,7 +286,6 @@ def main():
         csv_path = resource_path(f"leads/{i_year}/{collection_name}.csv")
         df = pd.read_csv(csv_path)
 
-        st.session_state.updated = True
         # 해당 컬렉션에 데이터가 있는지 확인
         if db[collection_name].count_documents({}) > 0:
             db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
@@ -299,8 +299,7 @@ def main():
         records = df.to_dict(orient='records')
         collection.insert_many(records)
         
-        
-        st.write('Updated!')
+        st.write(st.session_state.updated)
 
     st.markdown('---')
     #데일리 리트 체크 화면
