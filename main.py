@@ -284,7 +284,8 @@ def main():
 
         csv_path = resource_path(f"leads/{i_year}/{collection_name}.csv")
         df = pd.read_csv(csv_path)
-        
+
+        st.session_state.updated = True
         # 해당 컬렉션에 데이터가 있는지 확인
         if db[collection_name].count_documents({}) > 0:
             db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
@@ -297,7 +298,7 @@ def main():
                 print(f"Collection '{collection_name}' was created.")
         records = df.to_dict(orient='records')
         collection.insert_many(records)
-        st.session_state.updated = True
+        
         
         st.write('Updated!')
 
