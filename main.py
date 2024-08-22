@@ -330,14 +330,17 @@ def main():
         daily_df = daily_df.drop('_id', axis=1)
         
         def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
+            st.session_state.daily_df_with_total = True
             daily_df.set_index(daily_df.columns[0], inplace=True)
             numeric_cols = daily_df.select_dtypes(include=['number']).columns 
             daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
             return daily_df
+        
         daily_df_with_total = daily_df_with_total(daily_df)
         st.session_state.daily_df_with_total = daily_df_with_total
         
         def daily_col_sum_dataframe(daily_df):
+            st.session_state.daily_col_sum_df = True
             column_sums = daily_df.sum(axis=0)
             column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
             return column_sums_df
@@ -349,6 +352,7 @@ def main():
         df = pd.DataFrame(data)
         df = df.drop('_id', axis=1)
         def display_weekly_df(df,i_year):
+            st.session_state.weekly_df = True
             def convert_to_date_wrapped(date_str):
                 return convert_to_date(date_str, i_year)
             df_melted = df.melt(id_vars=['program'], var_name='Date', value_name='Value')
