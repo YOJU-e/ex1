@@ -394,8 +394,11 @@ def main():
         st.write("Weekly Report")
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
-        st.dataframe(st.session_state.yearly_df)
-        st.pyplot(st.session_state.yearly_plt)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.dataframe(st.session_state.yearly_df)
+        with col2:
+            st.pyplot(st.session_state.yearly_plt)
 
     # #CPL 체크 화면
     st.markdown('---')
