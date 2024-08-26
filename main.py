@@ -48,6 +48,7 @@ def convert_to_date(date_str, i_year):
 
 def calculate_total_leads(client, t_year, t_month):
     st.session_state.yearly_df = True
+    st.session_state.yearly_plt = True
     df_total = pd.DataFrame()
     for y in range(2022,t_year+1):
         db_name = f'db_leads_{y}'
@@ -395,8 +396,7 @@ def main():
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
         st.dataframe(st.session_state.yearly_df)
-        if st.session_state.yearly_plt is not False:
-            st.pyplot(st.session_state.yearly_plt)
+        st.pyplot(st.session_state.yearly_plt)
 
     # #CPL 체크 화면
     st.markdown('---')
