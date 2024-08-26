@@ -375,7 +375,7 @@ def main():
         st.session_state.yearly_df = yearly_df
         
         yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
-        
+        st.session_state.yearly_plt = True
         plt.figure(figsize=(15, 7))
         plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
         plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
