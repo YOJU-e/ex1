@@ -372,16 +372,16 @@ def main():
         yearly_df = calculate_total_leads(client, t_year, t_month)
         st.session_state.yearly_df = yearly_df
         
-        yearly_wo_total_df = df.drop(12)
+        yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
         plt.figure(figsize=(15, 7))
-        plt.plot(yearly_wo_total_df['month'], yearly_wo_total_df['2022'], label='2022', marker='o')
-        plt.plot(yearly_wo_total_df['month'], yearly_wo_total_df['2023'], label='2023', marker='o')
-        plt.plot(yearly_wo_total_df['month'], yearyearly_wo_total_dfly_df['2024'], label='2024', marker='o')
+        plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
+        plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
+        plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
         plt.title('Monthly Data Over Years')
         plt.xlabel('Month')
         plt.ylabel('Values')
         plt.legend()
-        st.pyplot(plt)
+        
 
     if st.session_state.daily_df_with_total is not False:
         st.write('Daily Report')
@@ -391,6 +391,7 @@ def main():
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
         st.dataframe(st.session_state.yearly_df)
+        st.pyplot(plt)
 
     # #CPL 체크 화면
     st.markdown('---')
