@@ -162,8 +162,7 @@ def resource_path(relative_path):
 
 def main():
     st.title('LeadDataAutoReturn')
-    st.markdown('---')
-    st.session_state 
+    st.markdown('---') 
     Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
     ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs
     Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
@@ -305,7 +304,7 @@ def main():
 
     if st.session_state.updated is not '':
         st.write(st.session_state.updated)
-    st.session_state 
+    
     st.markdown('---')
     #데일리 리트 체크 화면
     st.subheader('Leads')
@@ -963,7 +962,7 @@ def main():
         st.write(st.session_state.w_cpl_df)
         st.write(st.session_state.t_cpl_df)
     
-    st.session_state
+
     client.close()
 
 if __name__ == "__main__":
