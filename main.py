@@ -163,6 +163,7 @@ def resource_path(relative_path):
 def main():
     st.title('LeadDataAutoReturn')
     st.markdown('---')
+    st.session_state 
     Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
     ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs
     Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
@@ -304,12 +305,11 @@ def main():
 
     if st.session_state.updated is not '':
         st.write(st.session_state.updated)
-
+    st.session_state 
     st.markdown('---')
     #데일리 리트 체크 화면
     st.subheader('Leads')
-    # st.markdown('---')
-    st.session_state   
+    # st.markdown('---') 
     years = list(range(2022, t_year + 1))
     months = list(range(1, 13))
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -349,7 +349,7 @@ def main():
             column_sums = daily_df.sum(axis=0)
             column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
             return column_sums_df
-      
+
         daily_col_sum_df = daily_col_sum_dataframe(daily_df)
         st.session_state.daily_col_sum_df = daily_col_sum_df
 
