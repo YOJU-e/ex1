@@ -185,6 +185,8 @@ def main():
         st.session_state.weekly_df = False
     if 'yearly_df' not in st.session_state:
         st.session_state.yearly_df = False
+    if 'yearly_plt' not in st.session_state:
+        st.session_state.yearly_plt = False
     if 'w_cpl_df' not in st.session_state:
         st.session_state.w_cpl_df = False
     if 't_cpl_df' not in st.session_state:
@@ -373,6 +375,7 @@ def main():
         st.session_state.yearly_df = yearly_df
         
         yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
+        
         plt.figure(figsize=(15, 7))
         plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
         plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
@@ -381,6 +384,7 @@ def main():
         plt.xlabel('Month')
         plt.ylabel('Values')
         plt.legend()
+        st.session_state.yearly_plt = plt
         
 
     if st.session_state.daily_df_with_total is not False:
@@ -391,7 +395,7 @@ def main():
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
         st.dataframe(st.session_state.yearly_df)
-        st.pyplot(plt)
+        st.pyplot(st.session_state.yearly_plt)
 
     # #CPL 체크 화면
     st.markdown('---')
