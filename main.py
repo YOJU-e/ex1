@@ -309,7 +309,7 @@ def main():
     #데일리 리트 체크 화면
     st.subheader('Leads')
     # st.markdown('---')
-    
+    st.session_state   
     years = list(range(2022, t_year + 1))
     months = list(range(1, 13))
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -385,7 +385,6 @@ def main():
         plt.ylabel('Values')
         plt.legend()
         st.session_state.yearly_plt = plt
-        st.session_state   
 
     if st.session_state.daily_df_with_total is not False:
         st.write('Daily Report')
