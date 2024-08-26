@@ -372,10 +372,11 @@ def main():
         yearly_df = calculate_total_leads(client, t_year, t_month)
         st.session_state.yearly_df = yearly_df
         
-        plt.figure(figsize=(10, 5))
-        plt.plot(yearly_df['month'], yearly_df['2022'], label='2022', marker='o')
-        plt.plot(yearly_df['month'], yearly_df['2023'], label='2023', marker='o')
-        plt.plot(yearly_df['month'], yearly_df['2024'], label='2024', marker='o')
+        yearly_wo_total_df = df.drop(12)
+        plt.figure(figsize=(15, 7))
+        plt.plot(yearly_wo_total_df['month'], yearly_wo_total_df['2022'], label='2022', marker='o')
+        plt.plot(yearly_wo_total_df['month'], yearly_wo_total_df['2023'], label='2023', marker='o')
+        plt.plot(yearly_wo_total_df['month'], yearyearly_wo_total_dfly_df['2024'], label='2024', marker='o')
         plt.title('Monthly Data Over Years')
         plt.xlabel('Month')
         plt.ylabel('Values')
