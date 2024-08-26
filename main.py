@@ -395,7 +395,8 @@ def main():
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
         st.dataframe(st.session_state.yearly_df)
-        st.pyplot(st.session_state.yearly_plt)
+        if st.session_state.yearly_plt is not False:
+            st.pyplot(st.session_state.yearly_plt)
 
     # #CPL 체크 화면
     st.markdown('---')
