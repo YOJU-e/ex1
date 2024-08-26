@@ -385,7 +385,7 @@ def main():
         plt.ylabel('Values')
         plt.legend()
         st.session_state.yearly_plt = plt
-        
+        st.session_state   
 
     if st.session_state.daily_df_with_total is not False:
         st.write('Daily Report')
@@ -961,6 +961,7 @@ def main():
         st.write(st.session_state.w_cpl_df)
         st.write(st.session_state.t_cpl_df)
     
+    st.session_state
     client.close()
 
 if __name__ == "__main__":
