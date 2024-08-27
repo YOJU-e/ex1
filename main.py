@@ -189,8 +189,6 @@ def main():
         st.session_state.yearly_df = False
     if 'yearly_df_' not in st.session_state:
         st.session_state.yearly_df_ = False
-    if 'yearly_plt' not in st.session_state:
-        st.session_state.yearly_plt = False
     if 'w_cpl_df' not in st.session_state:
         st.session_state.w_cpl_df = False
     if 't_cpl_df' not in st.session_state:
@@ -214,99 +212,6 @@ def main():
         st.write("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         st.write(e)
-
-    # if st.button('Initialization'):
-    #     for y in range(2022,t_year+1):
-    #         db_name= f'db_leads_{y}'   
-    #         db = client[db_name]
-    #         if y == t_year:
-    #             for m in range(1,t_month+1):
-    #                 e_month = number_to_month(m)
-    #                 collection_name = f'{e_month}_{y}'
-    #                 collection = db[collection_name]
-    #                 csv_path = resource_path(f"leads/{y}/{collection_name}.csv")
-    #                 df = pd.read_csv(csv_path)
-    #                 # 해당 컬렉션에 데이터가 있는지 확인
-    #                 if db[collection_name].count_documents({}) > 0:
-    #                     db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
-    #                     db.create_collection(collection_name)    # 컬렉션 재생성
-    #                     print(f"Collection '{collection_name}' was dropped and recreated.")
-    #                 else:
-    #                     # 컬렉션이 비어있다면 새로 생성 (필요한 경우)
-    #                     if collection_name not in db.list_collection_names():
-    #                         db.create_collection(collection_name)
-    #                         print(f"Collection '{collection_name}' was created.")
-    #                 records = df.to_dict(orient='records')
-    #                 collection.insert_many(records)
-    #         else:
-    #             for m in range(1,13):
-    #                 e_month = number_to_month(m)
-    #                 collection_name = f'{e_month}_{y}'
-    #                 collection = db[collection_name]
-    #                 csv_path = resource_path(f"leads/{y}/{collection_name}.csv")
-    #                 df = pd.read_csv(csv_path)
-    #                 # 해당 컬렉션에 데이터가 있는지 확인
-    #                 if db[collection_name].count_documents({}) > 0:
-    #                     db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
-    #                     db.create_collection(collection_name)    # 컬렉션 재생성
-    #                     print(f"Collection '{collection_name}' was dropped and recreated.")
-    #                 else:
-    #                     # 컬렉션이 비어있다면 새로 생성 (필요한 경우)
-    #                     if collection_name not in db.list_collection_names():
-    #                         db.create_collection(collection_name)
-    #                         print(f"Collection '{collection_name}' was created.")
-    #                 records = df.to_dict(orient='records')
-    #                 collection.insert_many(records)
-    #     st.write('Completed!')
-       
-        
-    # # 데이터 올리기 - 업데이트 버튼
-    # years = list(range(2022, t_year + 1))  # From 2022 to now
-    # months = list(range(1, 13))  # From January to December
-
-    # col1, col2, col3 = st.columns([1, 1, 1])
-    # with col1:
-    #     selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_update')
-    # with col2:
-    #     selected_month = st.selectbox('Select Month', months, index=t_month-1, key='month_select_for_update')
-    # st.markdown("""
-    # <style>
-    # .stButton button {
-    #     margin-top: 28px;  
-    # }
-    # </style>
-    # """, unsafe_allow_html=True)
-    # with col3:
-    #     update_btn = st.button('Update')
-
-    # if update_btn:
-    #     st.session_state.updated = 'Updated!'
-    #     i_year = selected_year
-    #     i_month = selected_month
-    #     e_month = number_to_month(i_month)
-    #     db_name= f'db_leads_{i_year}'   # t_year, t_month
-    #     db = client[db_name]
-    #     collection_name = f'{e_month}_{i_year}'
-    #     collection = db[collection_name]
-
-    #     csv_path = resource_path(f"leads/{i_year}/{collection_name}.csv")
-    #     df = pd.read_csv(csv_path)
-
-    #     # 해당 컬렉션에 데이터가 있는지 확인
-    #     if db[collection_name].count_documents({}) > 0:
-    #         db[collection_name].drop()    # 데이터가 있다면 컬렉션 제거
-    #         db.create_collection(collection_name)    # 컬렉션 재생성
-    #         print(f"Collection '{collection_name}' was dropped and recreated.")
-    #     else:
-    #         # 컬렉션이 비어있다면 새로 생성 (필요한 경우)
-    #         if collection_name not in db.list_collection_names():
-    #             db.create_collection(collection_name)
-    #             print(f"Collection '{collection_name}' was created.")
-    #     records = df.to_dict(orient='records')
-    #     collection.insert_many(records)
-
-    # if st.session_state.updated is not '':
-    #     st.write(st.session_state.updated)
     
     st.markdown('---')
     #데일리 리트 체크 화면
@@ -386,28 +291,6 @@ def main():
         
         yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
         st.session_state.yearly_df_ = yearly_df_
-        st.session_state.yearly_plt = True
-        
-        # plt.figure(figsize=(15, 7))
-        # plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
-        # plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
-        # plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
-        # plt.title('Monthly Data Over Years')
-        # plt.xlabel('Month')
-        # plt.ylabel('Values')
-        # plt.legend()
-        # st.session_state.yearly_plt = plt
-    
-        # if 'yearly_plt' not in st.session_state or st.session_state.yearly_plt is True:
-        #     plt.figure(figsize=(15, 7))
-        #     plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
-        #     plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
-        #     plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
-        #     plt.title('Monthly Data Over Years')
-        #     plt.xlabel('Month')
-        #     plt.ylabel('Values')
-        #     plt.legend()
-        #     st.session_state.yearly_plt = plt
 
     if st.session_state.daily_df_with_total is not False:
         st.write('Daily Report')
@@ -416,22 +299,24 @@ def main():
         st.write("Weekly Report")
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
+        plt.figure(figsize=(15, 7))
+        for y in range(2022,t_year+1):
+            plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'y'], label=f'y', marker='o')
+        plt.title('Monthly Data Over Years')
+        plt.xlabel('Month')
+        plt.ylabel('Values')
+        plt.legend()
+        
+        tab1, tab2= st.tabs(['Table' , 'Graph'])
+        with tab1:
+          st.dataframe(st.session_state.yearly_df) 
+        with tab2: 
+          st.write('hi')
         col1, col2 = st.columns(2)
         with col1:
             st.dataframe(st.session_state.yearly_df)
         with col2:
-            # st.pyplot(st.session_state.yearly_plt)
-            if 'yearly_plt' in st.session_state and st.session_state.yearly_plt:
-                plt.figure(figsize=(15, 7))
-                plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_['2022'], label='2022', marker='o')
-                plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_['2023'], label='2023', marker='o')
-                plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_['2024'], label='2024', marker='o')
-                plt.title('Monthly Data Over Years')
-                plt.xlabel('Month')
-                plt.ylabel('Values')
-                plt.legend()
-                st.pyplot(plt)
-                st.session_state.yearly_plt = False
+            st.pyplot(plt)
 
     # #CPL 체크 화면
     st.markdown('---')
