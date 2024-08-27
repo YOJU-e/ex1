@@ -47,7 +47,6 @@ def convert_to_date(date_str, i_year):
 
 def calculate_total_leads(client, t_year, t_month):
     st.session_state.yearly_df = True
-    st.session_state.yearly_plt = True
     df_total = pd.DataFrame()
     for y in range(2022,t_year+1):
         db_name = f'db_leads_{y}'
@@ -145,11 +144,11 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
 
     # 다시 원래 형태로 전치
     weekly_df = weekly_df.T
-    # weekly_df.columns = pd.to_datetime(weekly_df.columns).strftime('%Y-%m-%d')
-    # weekly_df.columns = [col.date() for col in weekly_df.columns]
+    weekly_df.columns = pd.to_datetime(weekly_df.columns)
+    weekly_df.columns = [col.date() for col in weekly_df.columns]
     # weekly_df.columns = pd.to_datetime(weekly_df.columns)
     # weekly_df.columns = weekly_df.columns.strftime('%Y-%m-%d')
-    weekly_df.columns = [pd.to_datetime(col).strftime('%Y-%m-%d') for col in weekly_df.columns]
+    # weekly_df.columns = [pd.to_datetime(col).strftime('%Y-%m-%d') for col in weekly_df.columns]
 
     return weekly_df
 
@@ -384,6 +383,7 @@ def main():
         st.session_state.yearly_df = yearly_df
         
         yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
+        st.session_state.yearly_plt = True
         
         # plt.figure(figsize=(15, 7))
         # plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
@@ -395,16 +395,16 @@ def main():
         # plt.legend()
         # st.session_state.yearly_plt = plt
     
-        if 'yearly_plt' not in st.session_state or st.session_state.yearly_plt is True:
-            plt.figure(figsize=(15, 7))
-            plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
-            plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
-            plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
-            plt.title('Monthly Data Over Years')
-            plt.xlabel('Month')
-            plt.ylabel('Values')
-            plt.legend()
-            st.session_state.yearly_plt = plt
+        # if 'yearly_plt' not in st.session_state or st.session_state.yearly_plt is True:
+        #     plt.figure(figsize=(15, 7))
+        #     plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
+        #     plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
+        #     plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
+        #     plt.title('Monthly Data Over Years')
+        #     plt.xlabel('Month')
+        #     plt.ylabel('Values')
+        #     plt.legend()
+        #     st.session_state.yearly_plt = plt
 
     if st.session_state.daily_df_with_total is not False:
         st.write('Daily Report')
@@ -418,8 +418,17 @@ def main():
             st.dataframe(st.session_state.yearly_df)
         with col2:
             # st.pyplot(st.session_state.yearly_plt)
-            if 'yearly_plt' in st.session_state:
-                st.pyplot(st.session_state.yearly_plt)
+            if 'yearly_plt' in st.session_state and st.session_state.yearly_plt:
+                plt.figure(figsize=(15, 7))
+                plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_['2022'], label='2022', marker='o')
+                plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_['2023'], label='2023', marker='o')
+                plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_['2024'], label='2024', marker='o')
+                plt.title('Monthly Data Over Years')
+                plt.xlabel('Month')
+                plt.ylabel('Values')
+                plt.legend()
+                st.pyplot(plt)
+                st.session_state.yearly_plt = False
 
     # #CPL 체크 화면
     st.markdown('---')
