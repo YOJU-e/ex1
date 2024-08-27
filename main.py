@@ -311,12 +311,7 @@ def main():
         with tab1:
           st.dataframe(st.session_state.yearly_df) 
         with tab2: 
-          st.write('hi')
-        col1, col2 = st.columns(2)
-        with col1:
-            st.dataframe(st.session_state.yearly_df)
-        with col2:
-            st.pyplot(plt)
+          st.pyplot(plt)
 
     # #CPL 체크 화면
     st.markdown('---')
