@@ -316,6 +316,13 @@ def main():
         selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_d_check')
     with col2:
         selected_month = st.selectbox('Select Month', months, index=t_month-1, key='month_select_for_d_check')
+    st.markdown("""
+    <style>
+    .stButton button {
+        margin-top: 28px;  
+    }
+    </style>
+    """, unsafe_allow_html=True)
     with col3:
         submit_btn = st.button('Submit')
 
