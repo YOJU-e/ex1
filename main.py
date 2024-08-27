@@ -301,7 +301,7 @@ def main():
         st.write('Yearly Report')
         plt.figure(figsize=(15, 7))
         for y in range(2022,t_year+1):
-            plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'y'], label=f'y', marker='o')
+            plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
         plt.title('Monthly Data Over Years')
         plt.xlabel('Month')
         plt.ylabel('Values')
