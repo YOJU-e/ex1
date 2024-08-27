@@ -187,6 +187,8 @@ def main():
         st.session_state.weekly_df = False
     if 'yearly_df' not in st.session_state:
         st.session_state.yearly_df = False
+    if 'yearly_df_' not in st.session_state:
+        st.session_state.yearly_df_ = False
     if 'yearly_plt' not in st.session_state:
         st.session_state.yearly_plt = False
     if 'w_cpl_df' not in st.session_state:
@@ -383,6 +385,7 @@ def main():
         st.session_state.yearly_df = yearly_df
         
         yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
+        st.session_state.yearly_df_ = yearly_df_
         st.session_state.yearly_plt = True
         
         # plt.figure(figsize=(15, 7))
