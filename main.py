@@ -31,8 +31,7 @@ def convert_to_date(date_str, i_year):
 
     if date_str == "Total":
         return None
-    try:
-        # 예를 들어 'July1st'에서 'July'와 '1'을 추출
+    try:    # 예를 들어 'July1st'에서 'July'와 '1'을 추출
         for month in month_map:
             if date_str.startswith(month):
                 day_str = date_str[len(month):]
@@ -385,15 +384,27 @@ def main():
         st.session_state.yearly_df = yearly_df
         
         yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
-        plt.figure(figsize=(15, 7))
-        plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
-        plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
-        plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
-        plt.title('Monthly Data Over Years')
-        plt.xlabel('Month')
-        plt.ylabel('Values')
-        plt.legend()
-        st.session_state.yearly_plt = plt
+        
+        # plt.figure(figsize=(15, 7))
+        # plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
+        # plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
+        # plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
+        # plt.title('Monthly Data Over Years')
+        # plt.xlabel('Month')
+        # plt.ylabel('Values')
+        # plt.legend()
+        # st.session_state.yearly_plt = plt
+    
+        if 'yearly_plt' not in st.session_state or st.session_state.yearly_plt is True:
+            plt.figure(figsize=(15, 7))
+            plt.plot(yearly_df_['month'], yearly_df_['2022'], label='2022', marker='o')
+            plt.plot(yearly_df_['month'], yearly_df_['2023'], label='2023', marker='o')
+            plt.plot(yearly_df_['month'], yearly_df_['2024'], label='2024', marker='o')
+            plt.title('Monthly Data Over Years')
+            plt.xlabel('Month')
+            plt.ylabel('Values')
+            plt.legend()
+            st.session_state.yearly_plt = plt
 
     if st.session_state.daily_df_with_total is not False:
         st.write('Daily Report')
@@ -406,7 +417,9 @@ def main():
         with col1:
             st.dataframe(st.session_state.yearly_df)
         with col2:
-            st.pyplot(st.session_state.yearly_plt)
+            # st.pyplot(st.session_state.yearly_plt)
+            if 'yearly_plt' in st.session_state:
+                st.pyplot(st.session_state.yearly_plt)
 
     # #CPL 체크 화면
     st.markdown('---')
