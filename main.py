@@ -148,8 +148,9 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
     weekly_df = weekly_df.T
     # weekly_df.columns = pd.to_datetime(weekly_df.columns).strftime('%Y-%m-%d')
     # weekly_df.columns = [col.date() for col in weekly_df.columns]
-    weekly_df.columns = pd.to_datetime(weekly_df.columns)
-    weekly_df.columns = weekly_df.columns.strftime('%Y-%m-%d')
+    # weekly_df.columns = pd.to_datetime(weekly_df.columns)
+    # weekly_df.columns = weekly_df.columns.strftime('%Y-%m-%d')
+    weekly_df.columns = [pd.to_datetime(col).strftime('%Y-%m-%d') for col in weekly_df.columns]
 
     return weekly_df
 
