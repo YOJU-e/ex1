@@ -884,9 +884,9 @@ def main():
         st.session_state.t_cpl_df = t_df
 
     if st.session_state.w_cpl_df is not False:
-        st.write(f'weekly_cpl from {f_month}/{f_year} to {t_month}/{t_year}')
+        st.write('weekly_cpl')
         st.write(st.session_state.w_cpl_df)
-        st.write(f'Total_cpl from {f_month}/{f_year} to {t_month}/{t_year}')
+        st.write('Total_cpl')
         st.write(st.session_state.t_cpl_df)
     
 
