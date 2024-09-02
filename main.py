@@ -484,7 +484,6 @@ def main():
         f_month = month_to_number(selected_f_month)
         t_year = selected_t_year
         t_month = month_to_number(selected_t_month)
-        #############################333month
 
         # weekly cpl 계산
         w_df = concat_d_df(client, programs, f_year, f_month, t_year, t_month)
@@ -722,7 +721,6 @@ def main():
         d_df = concat_d_df(client, programs, f_year, f_month, t_year, t_month)
         numeric_cols = d_df.select_dtypes(include=['number']).columns # 열 선택
         d_df['Total_Leads'] = d_df[numeric_cols].sum(axis=1)
-        # st.write(d_df)
         
         #cost
         cost_dic = {}
@@ -886,7 +884,9 @@ def main():
         st.session_state.t_cpl_df = t_df
 
     if st.session_state.w_cpl_df is not False:
+        st.write(f'weekly_cpl from {f_month}/{f_year} to {t_month}/{t_year}')
         st.write(st.session_state.w_cpl_df)
+        st.write(f'Total_cpl from {f_month}/{f_year} to {t_month}/{t_year}')
         st.write(st.session_state.t_cpl_df)
     
 
