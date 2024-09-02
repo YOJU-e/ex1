@@ -19,6 +19,15 @@ def number_to_month(month):
             return key
     return "Invalid month name"
 
+def month_to_number(month_name):
+    months = {
+        "January": 1, "February": 2, "March": 3, "April": 4,
+        "May": 5, "June": 6, "July": 7, "August": 8,
+        "September": 9, "October": 10, "November": 11, "December": 12
+    }
+    return months.get(month_name, "Invalid month name")
+
+
 def convert_to_date(date_str, i_year):
     # 예시: 'July1st' 같은 문자열을 '2024-07-01' 같은 형식으로 변환
     month_map = {
@@ -136,7 +145,6 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                     new_columns = [convert_to_date(col,y) for col in df_table.columns]
                     df_table.columns = new_columns
                     df = pd.concat([df, df_table], axis=1)
-    # print(df)
     df = df.T
     df.index.name = 'Date'
 
@@ -219,7 +227,8 @@ def main():
     st.subheader('Leads')
     # st.markdown('---') 
     years = list(range(2022, t_year + 1))
-    months = list(range(1, 13))
+    # months = list(range(1, 13))
+    months = ['January', 'February', 'March', 'April','May','June','July','August','September', 'October', 'November', 'December']
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
         selected_year = st.selectbox('Select Year', years, index=years.index(t_year), key='year_select_for_d_check')
@@ -238,10 +247,10 @@ def main():
     if submit_btn:
         i_year = selected_year
         i_month = selected_month
-        e_month = number_to_month(i_month)
+        #e_month = number_to_month(i_month)
         db_name= f'db_leads_{i_year}'   # t_year, t_month
         db = client[db_name]
-        collection_name = f'{e_month}_{i_year}'
+        collection_name = f'{i_month}_{i_year}'
         collection = db[collection_name]
         data = list(collection.find())
         
@@ -319,7 +328,8 @@ def main():
     st.subheader('CPLs')    #Have 37 categories, default = 1
     # st.markdown('---')
     years = list(range(2022, t_year + 1))
-    months = list(range(1, 13))
+    # months = list(range(1, 13))
+    months = ['January', 'February', 'March', 'April','May','June','July','August','September', 'October', 'November', 'December']
 
     col1, col2, col3, col4 = st.columns([1,2,2,1])
     with col1:
@@ -471,9 +481,10 @@ def main():
 
     if cal_btn:
         f_year = selected_f_year
-        f_month = selected_f_month
+        f_month = month_to_number(selected_f_month)
         t_year = selected_t_year
-        t_month = selected_t_month
+        t_month = month_to_number(selected_t_month)
+        #############################333month
 
         # weekly cpl 계산
         w_df = concat_d_df(client, programs, f_year, f_month, t_year, t_month)
