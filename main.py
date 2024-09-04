@@ -27,7 +27,6 @@ def month_to_number(month_name):
     }
     return months.get(month_name, "Invalid month name")
 
-
 def convert_to_date(date_str, i_year):
     # 예시: 'July1st' 같은 문자열을 '2024-07-01' 같은 형식으로 변환
     month_map = {
@@ -173,10 +172,10 @@ def resource_path(relative_path):
 def main():
     st.title('LeadDataAutoReturn')
     st.markdown('---') 
-    Goto_option_file_path = resource_path("data/option_list.xlsx") #'./data/option_list.xlsx'
-    ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs
-    Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
-    programs_file_path = resource_path("data/program_list.xlsx")
+    Goto_option_file_path = resource_path('./data/option_list.xlsx') #'./data/option_list.xlsx';"data/option_list.xlsx"
+    ckCat_csv_path = resource_path("./data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs;"data/ck_PC1.csv"
+    Programs_csv_path = resource_path("./data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
+    programs_file_path = resource_path("./data/program_list.xlsx")
     df_programs = pd.read_excel(programs_file_path, engine='openpyxl')
     programs = df_programs.iloc[:, 0].tolist()
 
@@ -377,7 +376,6 @@ def main():
         
     if st.session_state.daily_df_with_total is not False:
         st.write('Daily Report')
-        
         st.dataframe(st.session_state.daily_df_with_total)
         st.dataframe(st.session_state.daily_col_sum_df)
         st.write("Weekly Report")
@@ -468,25 +466,25 @@ def main():
         cost_FMHS_UG = st.text_input(f'{program_list_df.iloc[1,5]}', value='1', key=f'cost_{program_list_df.iloc[1,5]}')
         st.session_state.costs[11] = cost_FMHS_UG
 
-    col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
+    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1]) #col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
     with col1:
-        cost_FMHS_UG_N = st.text_input(f'{program_list_df.iloc[2,0]}', value='1', key=f'cost_{program_list_df.iloc[2,0]}')
-        st.session_state.costs[12] = cost_FMHS_UG_N
-    with col2:
         cost_FOSSLA_PG = st.text_input(f'{program_list_df.iloc[2,1]}', value='1', key=f'cost_{program_list_df.iloc[2,1]}')
         st.session_state.costs[13] = cost_FOSSLA_PG
-    with col3:
+    with col2:
         cost_FOSSLA_UG = st.text_input(f'{program_list_df.iloc[2,2]}', value='1', key=f'cost_{program_list_df.iloc[2,2]}')
         st.session_state.costs[14] = cost_FOSSLA_UG
-    with col4:
+    with col3:
         cost_F_art = st.text_input(f'{program_list_df.iloc[2,3]}', value='1', key=f'cost_{program_list_df.iloc[2,3]}')
         st.session_state.costs[15] = cost_F_art
-    with col5:
+    with col4:
         cost_F_sci = st.text_input(f'{program_list_df.iloc[2,4]}', value='1', key=f'cost_{program_list_df.iloc[2,4]}')
         st.session_state.costs[16] = cost_F_sci
-    with col6:
+    with col5:
         cost_FPS_PG = st.text_input(f'{program_list_df.iloc[2,5]}', value='1', key=f'cost_{program_list_df.iloc[2,5]}')
         st.session_state.costs[17] = cost_FPS_PG
+    # with col1:
+    #     cost_FMHS_UG_N = st.text_input(f'{program_list_df.iloc[2,0]}', value='1', key=f'cost_{program_list_df.iloc[2,0]}')
+    #     st.session_state.costs[12] = cost_FMHS_UG_N
 
     col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
     with col1:
@@ -638,12 +636,12 @@ def main():
                     cost = float(cost_FMHS_UG)
                     value = cost/w_df.iloc[i, c]
                     w_df.iloc[i, c] = value
-            if p == 'FMHS (UG) - Nursing':
-                for c in range(0, len(column_names)):
-                    i = index_values.index('FMHS (UG) - Nursing')
-                    cost = float(cost_FMHS_UG_N)
-                    value = cost/w_df.iloc[i, c]
-                    w_df.iloc[i, c] = value
+            # if p == 'FMHS (UG) - Nursing':
+            #     for c in range(0, len(column_names)):
+            #         i = index_values.index('FMHS (UG) - Nursing')
+            #         cost = float(cost_FMHS_UG_N)
+            #         value = cost/w_df.iloc[i, c]
+            #         w_df.iloc[i, c] = value
             if p == 'FOSSLA (PG)':
                 for c in range(0, len(column_names)):
                     i = index_values.index('FOSSLA (PG)')
