@@ -306,6 +306,11 @@ def main():
                     yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
                     st.session_state.yearly_df_ = yearly_df_
                 else:
+                    st.session_state.daily_df_with_total = False
+                    st.session_state.daily_col_sum_df = False
+                    st.session_state.weekly_df = False
+                    st.session_state.yearly_df = False   
+                    st.session_state.yearly_df_ = False 
                     st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
             else:
                 # Daily report
@@ -356,6 +361,11 @@ def main():
                 yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
                 st.session_state.yearly_df_ = yearly_df_
         else:
+            st.session_state.daily_df_with_total = False
+            st.session_state.daily_col_sum_df = False
+            st.session_state.weekly_df = False
+            st.session_state.yearly_df = False   
+            st.session_state.yearly_df_ = False 
             st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
         
         # # Daily report
