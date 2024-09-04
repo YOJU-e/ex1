@@ -302,26 +302,81 @@ def main():
         yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
         st.session_state.yearly_df_ = yearly_df_
 
-    if st.session_state.daily_df_with_total is not False:
-        st.write('Daily Report')
-        st.dataframe(st.session_state.daily_df_with_total)
-        st.dataframe(st.session_state.daily_col_sum_df)
-        st.write("Weekly Report")
-        st.dataframe(st.session_state.weekly_df)
-        st.write('Yearly Report')
-        plt.figure(figsize=(15, 7))
-        for y in range(2022,t_year+1):
-            plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
-        plt.title('Monthly Data Over Years')
-        plt.xlabel('Month')
-        plt.ylabel('Values')
-        plt.legend()
+    if i_year<=t_year:
+        if i_year == t_year:
+            en_month = month_to_number(i_month)
+            if en_month <= t_month:
+                print('그대로 보여주기')
+                if st.session_state.daily_df_with_total is not False:
+                    st.write('Daily Report')
+                    
+                    st.dataframe(st.session_state.daily_df_with_total)
+                    st.dataframe(st.session_state.daily_col_sum_df)
+                    st.write("Weekly Report")
+                    st.dataframe(st.session_state.weekly_df)
+                    st.write('Yearly Report')
+                    plt.figure(figsize=(15, 7))
+                    for y in range(2022,t_year+1):
+                        plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
+                    plt.title('Monthly Data Over Years')
+                    plt.xlabel('Month')
+                    plt.ylabel('Values')
+                    plt.legend()
+                    
+                    tab1, tab2= st.tabs(['Table' , 'Graph'])
+                    with tab1:
+                      st.dataframe(st.session_state.yearly_df) 
+                    with tab2: 
+                      st.pyplot(plt)
+            else:
+                st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
+        else:
+            if st.session_state.daily_df_with_total is not False:
+                st.write('Daily Report')
+                
+                st.dataframe(st.session_state.daily_df_with_total)
+                st.dataframe(st.session_state.daily_col_sum_df)
+                st.write("Weekly Report")
+                st.dataframe(st.session_state.weekly_df)
+                st.write('Yearly Report')
+                plt.figure(figsize=(15, 7))
+                for y in range(2022,t_year+1):
+                    plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
+                plt.title('Monthly Data Over Years')
+                plt.xlabel('Month')
+                plt.ylabel('Values')
+                plt.legend()
+                
+                tab1, tab2= st.tabs(['Table' , 'Graph'])
+                with tab1:
+                  st.dataframe(st.session_state.yearly_df) 
+                with tab2: 
+                  st.pyplot(plt)
+    else:
+        st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
+            
         
-        tab1, tab2= st.tabs(['Table' , 'Graph'])
-        with tab1:
-          st.dataframe(st.session_state.yearly_df) 
-        with tab2: 
-          st.pyplot(plt)
+    # if st.session_state.daily_df_with_total is not False:
+    #     st.write('Daily Report')
+        
+    #     st.dataframe(st.session_state.daily_df_with_total)
+    #     st.dataframe(st.session_state.daily_col_sum_df)
+    #     st.write("Weekly Report")
+    #     st.dataframe(st.session_state.weekly_df)
+    #     st.write('Yearly Report')
+    #     plt.figure(figsize=(15, 7))
+    #     for y in range(2022,t_year+1):
+    #         plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
+    #     plt.title('Monthly Data Over Years')
+    #     plt.xlabel('Month')
+    #     plt.ylabel('Values')
+    #     plt.legend()
+        
+    #     tab1, tab2= st.tabs(['Table' , 'Graph'])
+    #     with tab1:
+    #       st.dataframe(st.session_state.yearly_df) 
+    #     with tab2: 
+    #       st.pyplot(plt)
 
     # #CPL 체크 화면
     st.markdown('---')
