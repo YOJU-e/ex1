@@ -253,108 +253,158 @@ def main():
         collection_name = f'{i_month}_{i_year}'
         collection = db[collection_name]
         data = list(collection.find())
-        
-        # Daily report
-        daily_df = pd.DataFrame(data)
-        daily_df = daily_df.drop('_id', axis=1)
-        
-        def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
-            st.session_state.daily_df_with_total = True
-            daily_df.set_index(daily_df.columns[0], inplace=True)
-            numeric_cols = daily_df.select_dtypes(include=['number']).columns 
-            daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
-            return daily_df
-        
-        daily_df_with_total = daily_df_with_total(daily_df)
-        st.session_state.daily_df_with_total = daily_df_with_total
-        
-        def daily_col_sum_dataframe(daily_df):
-            st.session_state.daily_col_sum_df = True
-            column_sums = daily_df.sum(axis=0)
-            column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
-            return column_sums_df
 
-        daily_col_sum_df = daily_col_sum_dataframe(daily_df)
-        st.session_state.daily_col_sum_df = daily_col_sum_df
-
-        # Weekly report
-        df = pd.DataFrame(data)
-        df = df.drop('_id', axis=1)
-        def display_weekly_df(df,i_year):
-            st.session_state.weekly_df = True
-            def convert_to_date_wrapped(date_str):
-                return convert_to_date(date_str, i_year)
-            df_melted = df.melt(id_vars=['program'], var_name='Date', value_name='Value')
-            df_melted['Date'] = df_melted['Date'].apply(convert_to_date_wrapped)
-            df_melted['Week'] = df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)    # 날짜를 포함하는 주 식별 (각 날짜를 해당 주의 월요일로 변환)
-            weekly_df = df_melted.groupby(['program', 'Week']).agg({'Value': 'sum'}).reset_index()    # 주별 데이터 집계 (예: 값의 합계)
-            weekly_pivot_df = weekly_df.pivot(index='program', columns='Week', values='Value').fillna(0)    # 주(week) 기반 데이터프레임으로 Pivot
-            weekly_pivot_df.loc['Total'] = weekly_pivot_df.sum()    # 각 열의 값을 합
-            weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
-            return weekly_pivot_df
+        if selected_year<=t_year:
+            en_month = int(month_to_number(selected_month))
+            if selected_year == t_year:
+                if en_month <= t_month:
+                    # Daily report
+                    daily_df = pd.DataFrame(data)
+                    daily_df = daily_df.drop('_id', axis=1)
+                    
+                    def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
+                        st.session_state.daily_df_with_total = True
+                        daily_df.set_index(daily_df.columns[0], inplace=True)
+                        numeric_cols = daily_df.select_dtypes(include=['number']).columns 
+                        daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
+                        return daily_df
+                    
+                    daily_df_with_total = daily_df_with_total(daily_df)
+                    st.session_state.daily_df_with_total = daily_df_with_total
+                    
+                    def daily_col_sum_dataframe(daily_df):
+                        st.session_state.daily_col_sum_df = True
+                        column_sums = daily_df.sum(axis=0)
+                        column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
+                        return column_sums_df
             
-        weekly_df = display_weekly_df(df,i_year)
-        st.session_state.weekly_df = weekly_df
-        # Yearly report 
-        yearly_df = calculate_total_leads(client, t_year, t_month)
-        st.session_state.yearly_df = yearly_df
+                    daily_col_sum_df = daily_col_sum_dataframe(daily_df)
+                    st.session_state.daily_col_sum_df = daily_col_sum_df
+            
+                    # Weekly report
+                    df = pd.DataFrame(data)
+                    df = df.drop('_id', axis=1)
+                    def display_weekly_df(df,i_year):
+                        st.session_state.weekly_df = True
+                        def convert_to_date_wrapped(date_str):
+                            return convert_to_date(date_str, i_year)
+                        df_melted = df.melt(id_vars=['program'], var_name='Date', value_name='Value')
+                        df_melted['Date'] = df_melted['Date'].apply(convert_to_date_wrapped)
+                        df_melted['Week'] = df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)    # 날짜를 포함하는 주 식별 (각 날짜를 해당 주의 월요일로 변환)
+                        weekly_df = df_melted.groupby(['program', 'Week']).agg({'Value': 'sum'}).reset_index()    # 주별 데이터 집계 (예: 값의 합계)
+                        weekly_pivot_df = weekly_df.pivot(index='program', columns='Week', values='Value').fillna(0)    # 주(week) 기반 데이터프레임으로 Pivot
+                        weekly_pivot_df.loc['Total'] = weekly_pivot_df.sum()    # 각 열의 값을 합
+                        weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
+                        return weekly_pivot_df
+                        
+                    weekly_df = display_weekly_df(df,i_year)
+                    st.session_state.weekly_df = weekly_df
+                    # Yearly report 
+                    yearly_df = calculate_total_leads(client, t_year, t_month)
+                    st.session_state.yearly_df = yearly_df
+                    
+                    yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
+                    st.session_state.yearly_df_ = yearly_df_
+                else:
+                    st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
+            else:
+                # Daily report
+                daily_df = pd.DataFrame(data)
+                daily_df = daily_df.drop('_id', axis=1)
+                
+                def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
+                    st.session_state.daily_df_with_total = True
+                    daily_df.set_index(daily_df.columns[0], inplace=True)
+                    numeric_cols = daily_df.select_dtypes(include=['number']).columns 
+                    daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
+                    return daily_df
+                
+                daily_df_with_total = daily_df_with_total(daily_df)
+                st.session_state.daily_df_with_total = daily_df_with_total
+                
+                def daily_col_sum_dataframe(daily_df):
+                    st.session_state.daily_col_sum_df = True
+                    column_sums = daily_df.sum(axis=0)
+                    column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
+                    return column_sums_df
         
-        yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
-        st.session_state.yearly_df_ = yearly_df_
+                daily_col_sum_df = daily_col_sum_dataframe(daily_df)
+                st.session_state.daily_col_sum_df = daily_col_sum_df
+        
+                # Weekly report
+                df = pd.DataFrame(data)
+                df = df.drop('_id', axis=1)
+                def display_weekly_df(df,i_year):
+                    st.session_state.weekly_df = True
+                    def convert_to_date_wrapped(date_str):
+                        return convert_to_date(date_str, i_year)
+                    df_melted = df.melt(id_vars=['program'], var_name='Date', value_name='Value')
+                    df_melted['Date'] = df_melted['Date'].apply(convert_to_date_wrapped)
+                    df_melted['Week'] = df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)    # 날짜를 포함하는 주 식별 (각 날짜를 해당 주의 월요일로 변환)
+                    weekly_df = df_melted.groupby(['program', 'Week']).agg({'Value': 'sum'}).reset_index()    # 주별 데이터 집계 (예: 값의 합계)
+                    weekly_pivot_df = weekly_df.pivot(index='program', columns='Week', values='Value').fillna(0)    # 주(week) 기반 데이터프레임으로 Pivot
+                    weekly_pivot_df.loc['Total'] = weekly_pivot_df.sum()    # 각 열의 값을 합
+                    weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
+                    return weekly_pivot_df
+                    
+                weekly_df = display_weekly_df(df,i_year)
+                st.session_state.weekly_df = weekly_df
+                # Yearly report 
+                yearly_df = calculate_total_leads(client, t_year, t_month)
+                st.session_state.yearly_df = yearly_df
+                
+                yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
+                st.session_state.yearly_df_ = yearly_df_
+        else:
+        st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
+        
+        # # Daily report
+        # daily_df = pd.DataFrame(data)
+        # daily_df = daily_df.drop('_id', axis=1)
+        
+        # def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
+        #     st.session_state.daily_df_with_total = True
+        #     daily_df.set_index(daily_df.columns[0], inplace=True)
+        #     numeric_cols = daily_df.select_dtypes(include=['number']).columns 
+        #     daily_df['Total'] = daily_df[numeric_cols].sum(axis=1)
+        #     return daily_df
+        
+        # daily_df_with_total = daily_df_with_total(daily_df)
+        # st.session_state.daily_df_with_total = daily_df_with_total
+        
+        # def daily_col_sum_dataframe(daily_df):
+        #     st.session_state.daily_col_sum_df = True
+        #     column_sums = daily_df.sum(axis=0)
+        #     column_sums_df = pd.DataFrame(column_sums, columns=['Total Leads']).transpose()
+        #     return column_sums_df
 
-    # if selected_year<=t_year:
-    #     if selected_year == t_year:
-    #         # st.write(selected_year,t_year)
-    #         en_month = int(month_to_number(selected_month))
-    #         if en_month <= t_month:
-    #             print('그대로 보여주기')
-    #             if st.session_state.daily_df_with_total is not False:
-    #                 st.write('Daily Report')
-                    
-    #                 st.dataframe(st.session_state.daily_df_with_total)
-    #                 st.dataframe(st.session_state.daily_col_sum_df)
-    #                 st.write("Weekly Report")
-    #                 st.dataframe(st.session_state.weekly_df)
-    #                 st.write('Yearly Report')
-    #                 plt.figure(figsize=(15, 7))
-    #                 for y in range(2022,t_year+1):
-    #                     plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
-    #                 plt.title('Monthly Data Over Years')
-    #                 plt.xlabel('Month')
-    #                 plt.ylabel('Values')
-    #                 plt.legend()
-                    
-    #                 tab1, tab2= st.tabs(['Table' , 'Graph'])
-    #                 with tab1:
-    #                   st.dataframe(st.session_state.yearly_df) 
-    #                 with tab2: 
-    #                   st.pyplot(plt)
-    #         else:
-    #             st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
-    #     else:
-    #         if st.session_state.daily_df_with_total is not False:
-    #             st.write('Daily Report')
-                
-    #             st.dataframe(st.session_state.daily_df_with_total)
-    #             st.dataframe(st.session_state.daily_col_sum_df)
-    #             st.write("Weekly Report")
-    #             st.dataframe(st.session_state.weekly_df)
-    #             st.write('Yearly Report')
-    #             plt.figure(figsize=(15, 7))
-    #             for y in range(2022,t_year+1):
-    #                 plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
-    #             plt.title('Monthly Data Over Years')
-    #             plt.xlabel('Month')
-    #             plt.ylabel('Values')
-    #             plt.legend()
-                
-    #             tab1, tab2= st.tabs(['Table' , 'Graph'])
-    #             with tab1:
-    #               st.dataframe(st.session_state.yearly_df) 
-    #             with tab2: 
-    #               st.pyplot(plt)
-    # else:
-    #     st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
+        # daily_col_sum_df = daily_col_sum_dataframe(daily_df)
+        # st.session_state.daily_col_sum_df = daily_col_sum_df
+
+        # # Weekly report
+        # df = pd.DataFrame(data)
+        # df = df.drop('_id', axis=1)
+        # def display_weekly_df(df,i_year):
+        #     st.session_state.weekly_df = True
+        #     def convert_to_date_wrapped(date_str):
+        #         return convert_to_date(date_str, i_year)
+        #     df_melted = df.melt(id_vars=['program'], var_name='Date', value_name='Value')
+        #     df_melted['Date'] = df_melted['Date'].apply(convert_to_date_wrapped)
+        #     df_melted['Week'] = df_melted['Date'].dt.to_period('W').apply(lambda r: r.start_time)    # 날짜를 포함하는 주 식별 (각 날짜를 해당 주의 월요일로 변환)
+        #     weekly_df = df_melted.groupby(['program', 'Week']).agg({'Value': 'sum'}).reset_index()    # 주별 데이터 집계 (예: 값의 합계)
+        #     weekly_pivot_df = weekly_df.pivot(index='program', columns='Week', values='Value').fillna(0)    # 주(week) 기반 데이터프레임으로 Pivot
+        #     weekly_pivot_df.loc['Total'] = weekly_pivot_df.sum()    # 각 열의 값을 합
+        #     weekly_pivot_df['Total'] = weekly_pivot_df.sum(axis=1)  # 각 행의 값을 합
+        #     return weekly_pivot_df
+            
+        # weekly_df = display_weekly_df(df,i_year)
+        # st.session_state.weekly_df = weekly_df
+        # # Yearly report 
+        # yearly_df = calculate_total_leads(client, t_year, t_month)
+        # st.session_state.yearly_df = yearly_df
+        
+        # yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
+        # st.session_state.yearly_df_ = yearly_df_
             
         
     if st.session_state.daily_df_with_total is not False:
