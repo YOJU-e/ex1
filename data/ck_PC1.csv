@@ -197,8 +197,8 @@ VYBOb,mba pg,GBS (PG)
 PGBOSs,mba pg,GBS (PG)
 BCMDM,medicine ug,FMHS (PG)
 BCMMD,medicine ug,FMHS (PG)
-HYHR,nursing ug,FMHS (UG) - Nursing
-DYHN,nursing ug,FMHS (UG) - Nursing
+HYHR,nursing ug,FMHS (UG)
+DYHN,nursing ug,FMHS (UG)
 BCMOT,opto ug,FMHS (UG)
 PDAPS,pharm pg,FPS (PG)
 VYMP,pharm pg,FPS (PG)
