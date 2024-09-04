@@ -427,7 +427,7 @@ def main():
         st.write(' ')
 
     program_list_df = pd.DataFrame([programs[i:i + 6] for i in range(0, len(programs), 6)])
-    st.write('program_list_df: ',program_list_df)
+    # st.write('program_list_df: ',program_list_df)
     if 'costs' not in st.session_state:
         st.session_state.costs = [''] * 37
     col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1])
