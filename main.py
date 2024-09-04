@@ -580,7 +580,7 @@ def main():
 
         # weekly cpl 계산
         w_df = concat_d_df(client, programs, f_year, f_month, t_year, t_month)
-        st.write('w_df',w_df)
+        # st.write('w_df',w_df)
 
         column_names = w_df.columns.tolist()
         index_values = w_df.index.tolist()
