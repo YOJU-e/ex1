@@ -172,10 +172,10 @@ def resource_path(relative_path):
 def main():
     st.title('LeadDataAutoReturn')
     st.markdown('---') 
-    Goto_option_file_path = resource_path('data/option_list.xlsx') #'./data/option_list.xlsx';"data/option_list.xlsx"
-    ckCat_csv_path = resource_path("data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs;"data/ck_PC1.csv"
-    Programs_csv_path = resource_path("data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
-    programs_file_path = resource_path("data/program_list.xlsx")
+    Goto_option_file_path = resource_path('./data/option_list.xlsx') #'./data/option_list.xlsx';"data/option_list.xlsx"
+    ckCat_csv_path = resource_path("./data/ck_PC1.csv") #"./data/ck_PC1.csv" # to get name of programs;"data/ck_PC1.csv"
+    Programs_csv_path = resource_path("./data/Category_s1.csv") # "./data/Category_s1.csv" # to get Programme(unique value)
+    programs_file_path = resource_path("./data/program_list.xlsx")
     df_programs = pd.read_excel(programs_file_path, engine='openpyxl')
     programs = df_programs.iloc[:, 0].tolist()
 
@@ -203,23 +203,23 @@ def main():
         st.session_state.t_cpl_df = False
 
     
-    # mongoDB를 이용해서 데이터 주고받기        
-    with open('config.json') as config_file:
-        config = json.load(config_file)
-        mongo_user = config['mongo_user']
-        mongo_password = config['mongo_password']
-    
-    uri = f"mongodb+srv://{mongo_user}:{mongo_password}@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    
-    # Create a new client and connect to the server
-    client = MongoClient(uri)
-    
-    # Send a ping to confirm a successful connection
-    try:
-        client.admin.command('ping')
-        st.write("Pinged your deployment. You successfully connected to MongoDB!")
-    except Exception as e:
-        st.write(e)
+    # # mongoDB를 이용해서 데이터 주고받기
+    # with open('config.json') as config_file:
+    #     config = json.load(config_file)
+    #     mongo_user = config['mongo_user']
+    #     mongo_password = config['mongo_password']
+    #
+    # uri = f"mongodb+srv://{mongo_user}:{mongo_password}@cluster0.egiqw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    #
+    # # Create a new client and connect to the server
+    # client = MongoClient(uri)
+    #
+    # # Send a ping to confirm a successful connection
+    # try:
+    #     client.admin.command('ping')
+    #     st.write("Pinged your deployment. You successfully connected to MongoDB!")
+    # except Exception as e:
+    #     st.write(e)
     
     st.markdown('---')
     #데일리 리트 체크 화면
@@ -424,7 +424,7 @@ def main():
         st.write(' ')
 
     program_list_df = pd.DataFrame([programs[i:i+6] for i in range(0, len(programs), 6)])
-    st.write(program_list_df)
+    print(program_list_df)
     if 'costs' not in st.session_state:
         st.session_state.costs = [''] * 36 #35
     col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 1]) #완료
