@@ -304,8 +304,8 @@ def main():
 
     if selected_year<=t_year:
         if selected_year == t_year:
-            st.write(selected_year,t_year,month_to_number(selected_year))
-            en_month = int(month_to_number(selected_year))
+            # st.write(selected_year,t_year)
+            en_month = int(month_to_number(selected_month))
             if en_month <= t_month:
                 print('그대로 보여주기')
                 if st.session_state.daily_df_with_total is not False:
