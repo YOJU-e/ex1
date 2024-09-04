@@ -356,7 +356,7 @@ def main():
                 yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
                 st.session_state.yearly_df_ = yearly_df_
         else:
-        st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
+            st.write("You have selected a date beyond today. \nThe data has not been updated yet and cannot be retrieved.")
         
         # # Daily report
         # daily_df = pd.DataFrame(data)
