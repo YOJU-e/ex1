@@ -133,18 +133,33 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                     df_table.columns = new_columns
                     df = pd.concat([df, df_table], axis=1)
             else:
-                for m in range(1,13):
-                    e_month = number_to_month(m)
-                    collection_name = f'{e_month}_{y}'
-                    collection = db[collection_name]
-                    data = list(collection.find())
-                    df_table = pd.DataFrame(data)
-                    df_table = df_table.drop('_id', axis=1)
-                    df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
-                    df_table.set_index(df_table.columns[0], inplace=True)
-                    new_columns = [convert_to_date(col,y) for col in df_table.columns]
-                    df_table.columns = new_columns
-                    df = pd.concat([df, df_table], axis=1)
+                if f_year - y == 0:
+                    for m in range(f_month,13):
+                        e_month = number_to_month(m)
+                        collection_name = f'{e_month}_{y}'
+                        collection = db[collection_name]
+                        data = list(collection.find())
+                        df_table = pd.DataFrame(data)
+                        df_table = df_table.drop('_id', axis=1)
+                        df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
+                        df_table.set_index(df_table.columns[0], inplace=True)
+                        new_columns = [convert_to_date(col,y) for col in df_table.columns]
+                        df_table.columns = new_columns
+                        df = pd.concat([df, df_table], axis=1)
+
+                else:
+                    for m in range(1,13):
+                        e_month = number_to_month(m)
+                        collection_name = f'{e_month}_{y}'
+                        collection = db[collection_name]
+                        data = list(collection.find())
+                        df_table = pd.DataFrame(data)
+                        df_table = df_table.drop('_id', axis=1)
+                        df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
+                        df_table.set_index(df_table.columns[0], inplace=True)
+                        new_columns = [convert_to_date(col,y) for col in df_table.columns]
+                        df_table.columns = new_columns
+                        df = pd.concat([df, df_table], axis=1)
     df = df.T
     df.index.name = 'Date'
 
