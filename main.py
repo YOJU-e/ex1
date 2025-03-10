@@ -272,7 +272,7 @@ def main():
         def reports(data,i_year,i_month,client):
             # Daily report
             daily_df = pd.DataFrame(data)
-            daily_df = daily_df.drop('_id', axis=1)
+            daily_df = daily_df.drop('_id', axis=1, errors='ignore')    # daily_df = daily_df.drop('_id', axis=1)
             
             def daily_df_with_total (daily_df):    # 각 행의 합계 계산하여 'Row_Total' 열 추가
                 st.session_state.daily_df_with_total = True
