@@ -407,7 +407,7 @@ def main():
     if 'daily_df_with_total' in st.session_state:
         daily_df_with_total = st.session_state['daily_df_with_total']
     else:
-        daily_df_with_total = None  # 또는 pd.DataFrame()
+        daily_df_with_total = pd.DataFrame()
 
     programs = daily_df_with_total.index.tolist()  # 전체 인덱스 리스트
 
