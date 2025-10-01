@@ -401,16 +401,19 @@ def main():
 
     st.text("")    # 한줄 띄우기
     
-    # 프로그램 라벨
+    # 세션에서 복원
     obj = st.session_state.get('daily_df_with_total', None)
-
-    if 'daily_df_with_total' in st.session_state:
-        daily_df_with_total = st.session_state['daily_df_with_total']
-    else:
-        daily_df_with_total = pd.DataFrame()
-
-    programs = daily_df_with_total.index.tolist()  # 전체 인덱스 리스트
-
+    
+    # 타입 검증
+    if not isinstance(obj, pd.DataFrame):
+        st.error("'daily_df_with_total'이 세션에 없거나 DataFrame이 아닙니다. 생성/저장 로직을 확인하세요.")
+        st.stop()  # 이후 index/iloc 접근 방지 [권장]
+    # 정상 할당
+    daily_df_with_total = obj
+    
+    # 이제 안전하게 사용 가능
+    programs = daily_df_with_total.index.tolist()
+    
     # 세션 상태 초기화
     if 'costs' not in st.session_state or not isinstance(st.session_state.costs, dict):
         st.session_state.costs = {}
