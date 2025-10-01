@@ -414,6 +414,9 @@ def main():
     if 'costs' not in st.session_state:
         st.session_state.costs = {}
 
+    label = programs[start + c]  # 예시
+    st.session_state.costs[label] = val  # 키-값 저장
+
     # 6열 그리드로 동적 text_input 생성
     N_COLS = 6
     n = len(programs)
