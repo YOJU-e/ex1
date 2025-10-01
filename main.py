@@ -358,6 +358,7 @@ def main():
         st.write("Weekly Report")
         st.dataframe(st.session_state.weekly_df)
         st.write('Yearly Report')
+        st.dataframe(st.session_state.yearly_df_)
         plt.figure(figsize=(15, 7))
         for y in range(2022,t_year+1):
             plt.plot(st.session_state.yearly_df_['month'], st.session_state.yearly_df_[f'{y}'], label=f'{y}', marker='o')
