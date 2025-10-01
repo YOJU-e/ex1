@@ -405,7 +405,7 @@ def main():
     
     # 타입 검증
     if not isinstance(obj, pd.DataFrame):
-        st.error("'daily_df_with_total'이 세션에 없거나 DataFrame이 아닙니다. 생성/저장 로직을 확인하세요.")
+        st.error("'daily_df_with_total' is not in the session or is not a DataFrame. Please load the lead data first.")
         st.stop()  # 이후 index/iloc 접근 방지 [권장]
     # 정상 할당
     daily_df_with_total = obj
