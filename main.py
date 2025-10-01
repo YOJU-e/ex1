@@ -319,9 +319,11 @@ def main():
             # Yearly report 
             yearly_df = calculate_total_leads(client, t_year, t_month)
             st.session_state.yearly_df = yearly_df
+            st.dataFrame(st.session_state.yearly_df)    # 확인용, 이후 삭제
             
             yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
             st.session_state.yearly_df_ = yearly_df_
+            st.dataFrame(st.session_state.yearly_df_)
             
 
         if selected_year<=t_year:
