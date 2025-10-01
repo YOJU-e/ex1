@@ -7,6 +7,7 @@ from pymongo import MongoClient
 from datetime import datetime, date
 import time
 import json
+import math
 import matplotlib.pyplot as plt
 
 def number_to_month(month):
