@@ -468,8 +468,9 @@ def main():
         st.session_state.w_cpl_df = w_df
         st.session_state.t_cpl_df = d_df[['Cost', 'Total_Leads', 'CPL']]
 
-    if st.session_state.w_cpl_df is not False:
         st.write(f"{f_month}/{f_year}_{t_month}/{t_year}")
+
+    if st.session_state.w_cpl_df is not False:
         st.write('weekly_cpl')
         st.write(st.session_state.w_cpl_df)
         st.write('Total_cpl')
