@@ -411,26 +411,21 @@ def main():
     programs = daily_df_with_total.index.tolist()  # 전체 인덱스 리스트
 
     # 세션 상태 초기화
-    if 'costs' not in st.session_state:
+    if 'costs' not in st.session_state or not isinstance(st.session_state.costs, dict):
         st.session_state.costs = {}
-
-    # 6열 그리드로 동적 text_input 생성
+    
     N_COLS = 6
     n = len(programs)
     rows = math.ceil(n / N_COLS)
-
-    idx_global = 0
+    
     for r in range(rows):
         cols = st.columns([1, 1, 1, 1, 1, 1])
-        start = r * N_COLS
-        end = min(start + N_COLS, n)
-        for c, label in enumerate(programs[start:end]):
+        for c, label in enumerate(programs[r*N_COLS:(r+1)*N_COLS]):
             with cols[c]:
-                key = f"cost::{label}"  # 유니크 키
+                key = f"cost::{label}"
                 default = st.session_state.get(key, "1")
                 val = st.text_input(label, value=str(default), key=key)
-                st.session_state.costs[idx_global] = val
-                idx_global += 1
+                st.session_state.costs[label] = val   # 인덱스 대신 라벨 키로 저장
 
     # 버튼 클릭 시 계산
     if cal_btn:
