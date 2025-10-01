@@ -70,11 +70,13 @@ def calculate_total_leads(client, t_year, t_month):
                 collection = db[collection_name]
                 data = list(collection.find())
                 df_table = pd.DataFrame(data)
-                # st.write(df_table)
+                st.write(df_table)
                 # df_table = df_table.drop('_id', axis=1)
                 df_table = df_table.drop(columns=['_id'], errors='ignore')
+                st.write(df_table)
                 df_table = df_table.fillna(0)
-                month_total = df_table.drop('program',axis=1).values.sum()
+                month_total = df_table.drop('program',axis=1, errors='ignore').values.sum()
+                st.write(df_table)
                 monthly_total[m-1] = month_total
             df_total[f'{y}'] = monthly_total
 
