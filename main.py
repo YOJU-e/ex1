@@ -73,10 +73,8 @@ def calculate_total_leads(client, t_year, t_month):
                 st.write(df_table)
                 # df_table = df_table.drop('_id', axis=1)
                 df_table = df_table.drop(columns=['_id'], errors='ignore')
-                st.write(df_table)
                 df_table = df_table.fillna(0)
                 month_total = df_table.drop('program',axis=1, errors='ignore').values.sum()
-                st.write(df_table)
                 monthly_total[m-1] = month_total
             df_total[f'{y}'] = monthly_total
 
@@ -88,9 +86,9 @@ def calculate_total_leads(client, t_year, t_month):
                 collection = db[collection_name]
                 data = list(collection.find())
                 df_table = pd.DataFrame(data)
-                df_table = df_table.drop('_id', axis=1)
+                df_table = df_table.drop(columns=['_id'], errors='ignore')
                 df_table = df_table.fillna(0)
-                month_total = df_table.drop('program',axis=1).values.sum()
+                month_total = df_table.drop('program',axis=1, errors='ignore').values.sum()
                 monthly_total[m-1] = month_total
             df_total[f'{y}'] = monthly_total
 
@@ -319,11 +317,9 @@ def main():
             # Yearly report 
             yearly_df = calculate_total_leads(client, t_year, t_month)
             st.session_state.yearly_df = yearly_df
-            st.dataFrame(st.session_state.yearly_df)    # 확인용, 이후 삭제
             
             yearly_df_ = yearly_df[yearly_df['month'] != 'Total']
             st.session_state.yearly_df_ = yearly_df_
-            st.dataFrame(st.session_state.yearly_df_)
             
 
         if selected_year<=t_year:
