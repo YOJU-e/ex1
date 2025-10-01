@@ -70,8 +70,6 @@ def calculate_total_leads(client, t_year, t_month):
                 collection = db[collection_name]
                 data = list(collection.find())
                 df_table = pd.DataFrame(data)
-                # st.write(df_table)
-                # df_table = df_table.drop('_id', axis=1)
                 df_table = df_table.drop(columns=['_id'], errors='ignore')
                 df_table = df_table.fillna(0)
                 month_total = df_table.drop('program',axis=1, errors='ignore').values.sum()
@@ -115,7 +113,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                 collection = db[collection_name]
                 data = list(collection.find())
                 df_table = pd.DataFrame(data)
-                df_table = df_table.drop('_id', axis=1)
+                df_table = df_table.drop('_id', axis=1, errors='ignore')
                 df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                 df_table.set_index(df_table.columns[0], inplace=True)
                 new_columns = [convert_to_date(col,y) for col in df_table.columns]
@@ -129,7 +127,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                     collection = db[collection_name]
                     data = list(collection.find())
                     df_table = pd.DataFrame(data)
-                    df_table = df_table.drop('_id', axis=1)
+                    df_table = df_table.drop('_id', axis=1, errors='ignore')
                     df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                     df_table.set_index(df_table.columns[0], inplace=True)
                     new_columns = [convert_to_date(col,y) for col in df_table.columns]
@@ -143,7 +141,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                         collection = db[collection_name]
                         data = list(collection.find())
                         df_table = pd.DataFrame(data)
-                        df_table = df_table.drop('_id', axis=1)
+                        df_table = df_table.drop('_id', axis=1, errors='ignore')
                         df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                         df_table.set_index(df_table.columns[0], inplace=True)
                         new_columns = [convert_to_date(col,y) for col in df_table.columns]
@@ -157,7 +155,7 @@ def concat_d_df(client, programs, f_year, f_month, t_year, t_month):
                         collection = db[collection_name]
                         data = list(collection.find())
                         df_table = pd.DataFrame(data)
-                        df_table = df_table.drop('_id', axis=1)
+                        df_table = df_table.drop('_id', axis=1, errors='ignore')
                         df_table.rename(columns={df_table.columns[0]: 'program'}, inplace=True)
                         df_table.set_index(df_table.columns[0], inplace=True)
                         new_columns = [convert_to_date(col,y) for col in df_table.columns]
@@ -298,7 +296,7 @@ def main():
     
             # Weekly report
             df = pd.DataFrame(data)
-            df = df.drop('_id', axis=1)
+            df = df.drop('_id', axis=1, errors='ignore')
             def display_weekly_df(df,i_year):
                 st.session_state.weekly_df = True
                 def convert_to_date_wrapped(date_str):
