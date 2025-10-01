@@ -412,8 +412,7 @@ def main():
     # 정상 할당
     daily_df_with_total = obj
     
-    # 이제 안전하게 사용 가능
-    programs = daily_df_with_total.index.tolist()
+    programs = sorted(daily_df_with_total.index.tolist())
     
     # 세션 상태 초기화
     if 'costs' not in st.session_state or not isinstance(st.session_state.costs, dict):
