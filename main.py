@@ -350,7 +350,9 @@ def main():
             return f'background-color: {color}'
             
         st.write('Daily Report')
-        st.dataframe(st.session_state.daily_df_with_total.style.applymap(highlight_non_zero))
+        # st.dataframe(st.session_state.daily_df_with_total.style.applymap(highlight_non_zero))
+        st.dataframe(st.session_state.daily_df_with_total.style.map(highlight_non_zero))
+        
         st.dataframe(st.session_state.daily_col_sum_df)
         st.write("Weekly Report")
         st.dataframe(st.session_state.weekly_df)
